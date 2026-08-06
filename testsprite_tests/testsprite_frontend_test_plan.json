@@ -1,0 +1,564 @@
+[
+  {
+    "id": "TC001",
+    "title": "Add a product to the cart from product details",
+    "description": "This test verifies that a shopper can add a product from its details page and see it reflected in the cart flow.",
+    "category": "Product Details",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /products"
+      },
+      {
+        "type": "action",
+        "description": "Click a product card to open its details"
+      },
+      {
+        "type": "action",
+        "description": "Add the product to the cart"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the product is added to the cart"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Complete guest checkout with cash on delivery",
+    "description": "This verifies that a guest shopper can place an order with name, phone number, address, and cash on delivery payment.",
+    "category": "Checkout",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /checkout"
+      },
+      {
+        "type": "action",
+        "description": "Add a product to the cart from the shopping flow"
+      },
+      {
+        "type": "action",
+        "description": "Enter a full name"
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid phone number"
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid address"
+      },
+      {
+        "type": "action",
+        "description": "Select cash on delivery as the payment method"
+      },
+      {
+        "type": "action",
+        "description": "Submit the checkout form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the order confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the order is created successfully"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Browse featured products from the home page",
+    "description": "This test verifies that a guest shopper can see featured watches on the landing page and open a product detail page from there.",
+    "category": "Home Page",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify featured products are displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click a featured product to open its details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify product details are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Proceed to checkout from product details",
+    "description": "This test verifies that a shopper can move from product details into the checkout flow after choosing to buy.",
+    "category": "Product Details",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /products"
+      },
+      {
+        "type": "action",
+        "description": "Click a product card to open its details"
+      },
+      {
+        "type": "action",
+        "description": "Start checkout for the product"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the checkout flow is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Complete checkout with Vodafone Cash",
+    "description": "This verifies that a guest shopper can place an order using Vodafone Cash and receive the correct post-purchase state.",
+    "category": "Checkout",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /checkout"
+      },
+      {
+        "type": "action",
+        "description": "Add a product to the cart from the shopping flow"
+      },
+      {
+        "type": "action",
+        "description": "Enter a full name"
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid phone number"
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid address"
+      },
+      {
+        "type": "action",
+        "description": "Select Vodafone Cash as the payment method"
+      },
+      {
+        "type": "action",
+        "description": "Submit the checkout form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a payment-specific next-step message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the order is created successfully"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Complete checkout with InstaPay",
+    "description": "This verifies that a guest shopper can place an order using InstaPay and receive the correct post-purchase state.",
+    "category": "Checkout",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /checkout"
+      },
+      {
+        "type": "action",
+        "description": "Add a product to the cart from the shopping flow"
+      },
+      {
+        "type": "action",
+        "description": "Enter a full name"
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid phone number"
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid address"
+      },
+      {
+        "type": "action",
+        "description": "Select InstaPay as the payment method"
+      },
+      {
+        "type": "action",
+        "description": "Submit the checkout form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a payment-specific next-step message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the order is created successfully"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Browse all active products from the products list",
+    "description": "This test verifies that a guest shopper can browse the full active product list and open a product detail page from the grid.",
+    "category": "Products List",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /products"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify active products are displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click a product card to open its details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify product details are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Update cart item quantity and keep totals in sync",
+    "description": "This verifies that a shopper can change the quantity of an item in the cart and see the cart totals update correctly.",
+    "category": "Shopping Cart",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Add a product to the cart from the shopping flow"
+      },
+      {
+        "type": "action",
+        "description": "Change the quantity of the cart item to a valid higher value"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart reflects the updated item quantity"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart totals are recalculated"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Require mandatory checkout fields before order creation",
+    "description": "This verifies that checkout validation blocks submission when required customer details are missing.",
+    "category": "Checkout",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /checkout"
+      },
+      {
+        "type": "action",
+        "description": "Add a product to the cart from the shopping flow"
+      },
+      {
+        "type": "action",
+        "description": "Leave the phone number field empty"
+      },
+      {
+        "type": "action",
+        "description": "Submit the checkout form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a checkout validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the order is not created"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Remove an item from the cart",
+    "description": "This verifies that a shopper can remove a cart item and the cart updates to the expected remaining state.",
+    "category": "Shopping Cart",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Add two different products to the cart from the shopping flow"
+      },
+      {
+        "type": "action",
+        "description": "Remove one cart item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the removed item no longer appears in the cart"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the remaining cart state is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "View product details with reviews and purchase actions",
+    "description": "This test verifies that a shopper can open a product details page and see the information needed to decide to buy.",
+    "category": "Product Details",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /products"
+      },
+      {
+        "type": "action",
+        "description": "Click a product card to open its details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify product information is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify reviews are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Keep cart contents after returning to the cart page",
+    "description": "This verifies that items previously added to the cart remain visible when the shopper returns to the cart page.",
+    "category": "Shopping Cart",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Add a product to the cart from the shopping flow"
+      },
+      {
+        "type": "action",
+        "description": "Leave the cart page and return to it"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the previously added item is still in the cart"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart state is preserved"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Prevent checkout from an empty cart",
+    "description": "This verifies that a shopper cannot proceed to checkout without items in the cart.",
+    "category": "Shopping Cart",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Ensure the cart is empty"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to proceed to checkout"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty cart message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify checkout is blocked"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Show validation when adding an invalid cart item",
+    "description": "This verifies that invalid cart input is rejected and the cart remains unchanged.",
+    "category": "Shopping Cart",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to add an item with a missing product selection"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to add an item with an invalid quantity"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a cart validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart contents remain unchanged"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC015",
+    "title": "Link an anonymous session to a customer after purchase",
+    "description": "This verifies that an anonymous shopper can complete a purchase and the session is linked to the customer by phone number.",
+    "category": "Checkout",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /checkout"
+      },
+      {
+        "type": "action",
+        "description": "Browse products as an anonymous visitor"
+      },
+      {
+        "type": "action",
+        "description": "Add a product to the cart from the shopping flow"
+      },
+      {
+        "type": "action",
+        "description": "Enter a full name"
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid phone number"
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid address"
+      },
+      {
+        "type": "action",
+        "description": "Select cash on delivery as the payment method"
+      },
+      {
+        "type": "action",
+        "description": "Submit the checkout form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the order confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the customer session linkage is reflected after purchase"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC016",
+    "title": "Handle inactive or deleted product access from the products list",
+    "description": "This test verifies that opening an inactive or deleted product results in a blocked state that prevents shopping actions.",
+    "category": "Products List",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /products"
+      },
+      {
+        "type": "action",
+        "description": "Click a product card that resolves to an inactive or deleted product"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a product error state is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify add to cart and buy now actions are unavailable"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC017",
+    "title": "Handle invalid featured product access",
+    "description": "This test verifies that opening an invalid featured product leads to a blocked product error state instead of a usable detail page.",
+    "category": "Home Page",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click a featured product entry that resolves to an invalid product"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a product error state is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify add to cart and buy now actions are unavailable"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC018",
+    "title": "See product details error state for an invalid product id",
+    "description": "This test verifies that an invalid product id shows a blocked product state and prevents shopping actions.",
+    "category": "Product Details",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /products"
+      },
+      {
+        "type": "action",
+        "description": "Click a product entry that resolves to an invalid product id"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a product error state is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify add to cart and buy now actions are unavailable"
+      }
+    ],
+    "priority": "Low"
+  }
+]

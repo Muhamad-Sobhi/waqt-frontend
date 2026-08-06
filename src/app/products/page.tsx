@@ -1,12 +1,12 @@
-import { collection, getDocs, query, limit } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import HomeClient from './HomeClient';
+import ShopClient from './ShopClient';
 
 export const revalidate = 60; // Cache for 60 seconds
 
-export default async function HomePage() {
+export default async function ShopPage() {
   try {
-    const q = query(collection(db, 'products'), limit(8));
+    const q = query(collection(db, 'products'));
     const snapshot = await getDocs(q);
     const products = snapshot.docs.map(doc => {
       const data = doc.data();
@@ -23,9 +23,9 @@ export default async function HomePage() {
       };
     }) as any[];
     
-    return <HomeClient initialProducts={products} />;
-  } catch (error) {
+    return <ShopClient initialProducts={products} />;
+  } catch (error: any) {
     console.error('Error fetching products for SSR:', error);
-    return <HomeClient initialProducts={[]} />;
+    return <div>Error: {error.message}</div>;
   }
 }
