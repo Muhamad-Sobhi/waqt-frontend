@@ -25,6 +25,7 @@ export default function CheckoutPage() {
     orderNotes: '',
     paymentMethod: 'Cash on Delivery'
   });
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const governorates = [
     'Cairo', 'Giza', 'Alexandria', 'Qalyubia', 'Dakahlia', 'Sharqia', 
@@ -34,10 +35,10 @@ export default function CheckoutPage() {
   ];
 
   useEffect(() => {
-    if (items.length === 0) {
+    if (items.length === 0 && !isSubmitted) {
       router.push('/cart');
     }
-  }, [items, router]);
+  }, [items, isSubmitted, router]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -177,6 +178,7 @@ export default function CheckoutPage() {
         }));
       }
 
+      setIsSubmitted(true);
       clearCart();
       router.push('/checkout/success');
       
@@ -187,7 +189,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (items.length === 0) return null; // Let useEffect handle redirect
+  if (items.length === 0 && !isSubmitted) return null; // Let useEffect handle redirect
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] py-12 px-4 sm:px-6 lg:px-8 font-cairo">

@@ -12,17 +12,17 @@ export default function CheckoutSuccessPage() {
           </svg>
         </div>
         
-        <h1 className="text-3xl font-bold text-[#1a1a2e] mb-4">Order Received!</h1>
-        <p className="text-gray-600 mb-8 leading-relaxed">
-          Thank you for shopping with Waqt. We've received your order and our team will contact you on WhatsApp shortly to confirm the details.
+        <h1 className="text-3xl font-bold text-[#1a1a2e] mb-4" dir="rtl">تم استلام طلبك بنجاح!</h1>
+        <p className="text-gray-600 mb-8 leading-relaxed font-medium" dir="rtl">
+          شكراً لتسوقك من وقت (Waqt). لقد وصل طلبك للمسؤول بنجاح، وسنقوم بالتواصل معك قريباً عبر الواتساب لتأكيد التفاصيل ومتابعة الأوردر.
         </p>
         
         <div className="space-y-4">
           <Link href="/products" className="btn-gold block w-full py-4 rounded-xl text-center font-semibold text-white shadow-md hover:shadow-lg transition-all">
-            Continue Shopping
+            متابعة التسوق
           </Link>
           <Link href="/" className="block w-full py-4 rounded-xl text-center font-semibold text-[#1a1a2e] bg-gray-50 hover:bg-gray-100 transition-colors">
-            Return Home
+            العودة للرئيسية
           </Link>
         </div>
       </div>

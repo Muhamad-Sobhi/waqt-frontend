@@ -10,14 +10,16 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 bg-[#FAFAFA]">
-        <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 bg-[#FAFAFA] text-center">
+        <div className="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mb-6 shadow-inner border border-amber-100">
           <span className="text-4xl">🛍️</span>
         </div>
-        <h1 className="text-2xl font-bold text-[#1a1a2e] mb-2">Your cart is empty</h1>
-        <p className="text-gray-500 mb-8">Looks like you haven&apos;t added any watches yet.</p>
-        <Link href="/products" className="btn-gold px-8 py-3 rounded-xl flex items-center gap-2">
-          Continue Shopping →
+        <h1 className="text-2xl font-bold text-[#1a1a2e] mb-2" dir="rtl">سلة المشتريات فارغة</h1>
+        <p className="text-gray-500 mb-8 max-w-md leading-relaxed text-sm sm:text-base" dir="rtl">
+          لم تقم بإضافة أي منتجات إلى السلة بعد، أو تم إكمال طلبك الأخير بنجاح.
+        </p>
+        <Link href="/products" className="btn-gold px-8 py-3 rounded-xl flex items-center gap-2 font-semibold shadow-md hover:shadow-lg transition-all">
+          تصفح المنتجات ➔
         </Link>
       </div>
     );
