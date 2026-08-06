@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/components/CartProvider';
 import { getSessionId } from '@/components/SessionTracker';
+import { db } from '@/lib/firebase';
+import { collection, doc, writeBatch, serverTimestamp, increment } from 'firebase/firestore';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -89,35 +90,82 @@ export default function CheckoutPage() {
     }
 
     try {
-      const payload = {
-        customerName: formData.fullName,
-        customerPhone: formData.phone,
-        shippingAddress: {
+      const processedItems = items.map(item => ({
+        productId: item.productId,
+        productName: item.name,
+        quantity: item.quantity,
+        unitPrice: item.price,
+        imageUrl: item.image || '',
+      }));
+
+      const totalItemsInOrder = processedItems.reduce((acc, item) => acc + item.quantity, 0);
+      const totalAmount = totalPrice;
+
+      const batch = writeBatch(db);
+
+      // 1. Customer Profile
+      const customerRef = doc(db, 'customers', formData.phone);
+      batch.set(customerRef, {
+        fullName: formData.fullName,
+        phoneNumber: formData.phone,
+        defaultAddress: {
           governorate: formData.governorate,
           city: formData.city,
           detailedAddress: formData.detailedAddress
         },
-        orderNotes: formData.orderNotes,
-        paymentMethod: formData.paymentMethod,
-        items: items.map(item => ({
-          productId: item.productId,
-          quantity: item.quantity
-        })),
-        sessionId: getSessionId()
-      };
+        totalOrdersCount: increment(1),
+        totalItemsBought: increment(totalItemsInOrder),
+        totalSpend: increment(totalAmount),
+        lastPurchaseDate: serverTimestamp(),
+      }, { merge: true });
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${apiUrl}/api/checkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // 2. Create Order
+      const orderRef = doc(collection(db, 'orders'));
+      batch.set(orderRef, {
+        customerPhone: formData.phone,
+        customerName: formData.fullName,
+        deliveryAddress: {
+          governorate: formData.governorate,
+          city: formData.city,
+          detailedAddress: formData.detailedAddress
         },
-        body: JSON.stringify(payload),
+        orderNotes: formData.orderNotes || '',
+        paymentMethod: formData.paymentMethod || 'Cash on Delivery',
+        items: processedItems,
+        subtotal: totalAmount,
+        deliveryFee: 0,
+        totalPrice: totalAmount,
+        status: 'pending',
+        whatsappStatus: { sent: false },
+        trackingSessionId: getSessionId(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to process checkout. Please try again.');
+      // 3. Update Session
+      const sessionId = getSessionId();
+      if (sessionId) {
+        const sessionRef = doc(db, 'sessions', sessionId);
+        batch.set(sessionRef, {
+          linkedPhoneNumber: formData.phone,
+          lastActive: serverTimestamp(),
+        }, { merge: true });
       }
+
+      // 4. Create Notification
+      const notificationRef = doc(collection(db, 'notifications'));
+      batch.set(notificationRef, {
+        type: 'new_order',
+        title: 'New Order Received',
+        message: `Order from ${formData.fullName} for ${totalAmount.toLocaleString()} EGP`,
+        orderId: orderRef.id,
+        customerPhone: formData.phone,
+        isRead: false,
+        createdAt: serverTimestamp(),
+      });
+
+      // Execute all writes atomically
+      await batch.commit();
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('userInfo', JSON.stringify({
