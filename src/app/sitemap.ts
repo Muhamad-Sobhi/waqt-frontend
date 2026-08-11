@@ -1,13 +1,41 @@
 import { MetadataRoute } from 'next'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+const BASE_URL = 'https://waqt-watches.vercel.app'
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Get all products from your API/database
+  const products = await getProducts()
+
+  const productUrls: MetadataRoute.Sitemap = products.map((product) => ({
+    url: `${BASE_URL}/products/${product.id}`,
+    lastModified: product.updatedAt
+      ? new Date(product.updatedAt)
+      : new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }))
+
   return [
     {
-      url: 'https://waqt-watches.vercel.app',
+      url: BASE_URL,
       lastModified: new Date(),
-      changeFrequency: 'yearly',
+      changeFrequency: 'weekly',
       priority: 1,
     },
-    // تقدر تضيف بقية صفحات الموقع هنا لو عندك صفحات تانية
+
+    {
+      url: `${BASE_URL}/products`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+
+    ...productUrls,
   ]
+}
+
+async function getProducts() {
+  // TODO: get products from your database/API
+
+  return []
 }
