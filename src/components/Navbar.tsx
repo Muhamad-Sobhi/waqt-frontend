@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useCart } from './CartProvider';
 import { useState, useEffect } from 'react';
@@ -44,10 +45,13 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-            <img 
+            <Image 
               src="/logo.png" 
               alt="Waqt Logo" 
-              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" 
+              width={48}
+              height={48}
+              priority
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" 
             />
             <span className="text-xl sm:text-2xl font-black tracking-[0.25em] uppercase text-[#1a1a2e] group-hover:text-[#D4A853] transition-colors duration-300">
               Waqt
