@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/components/CartProvider';
 
 interface Product {
@@ -92,7 +93,14 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                       <Link href={`/products/${heroWatch.id}`} className="absolute top-4 right-4 md:right-8 w-64 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-xl border border-white/50 z-10 transform rotate-3 hover:rotate-0 hover:scale-105 transition-all duration-500 group">
                         <div className="aspect-square rounded-xl overflow-hidden mb-4 bg-gray-50 relative">
                           {heroWatch.images?.[0] ? (
-                            <img src={heroWatch.images[0]} alt={heroWatch.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            <Image 
+                              src={heroWatch.images[0]} 
+                              alt={heroWatch.name} 
+                              fill
+                              priority
+                              sizes="(max-width: 768px) 100vw, 33vw"
+                              className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                            />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-4xl">⌚</div>
                           )}
@@ -108,7 +116,14 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                       <Link href={`/products/${heroWallet.id}`} className="absolute bottom-4 left-4 md:left-0 w-56 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-2xl border border-white/50 z-20 transform -rotate-6 hover:rotate-0 hover:scale-105 transition-all duration-500 group">
                         <div className="aspect-square rounded-xl overflow-hidden mb-3 bg-gray-50 relative">
                           {heroWallet.images?.[0] ? (
-                            <img src={heroWallet.images[0]} alt={heroWallet.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            <Image 
+                              src={heroWallet.images[0]} 
+                              alt={heroWallet.name} 
+                              fill
+                              priority
+                              sizes="(max-width: 768px) 100vw, 33vw"
+                              className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                            />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-3xl">👛</div>
                           )}
