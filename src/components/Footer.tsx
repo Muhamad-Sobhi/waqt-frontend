@@ -7,9 +7,16 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-4xl font-bold tracking-wider" style={{ color: '#D4A853' }}>
-                WAQT
+            <div className="flex items-center gap-4 mb-6">
+              <div className="bg-white/95 p-2.5 rounded-2xl shadow-lg inline-block border border-white/10 hover:shadow-[0_0_20px_rgba(212,168,83,0.3)] transition-all">
+                <img 
+                  src="/logo.png" 
+                  alt="Waqt Logo" 
+                  className="h-12 sm:h-14 w-auto object-contain" 
+                />
+              </div>
+              <span className="text-2xl sm:text-3xl font-black tracking-[0.25em] uppercase text-white">
+                Waqt
               </span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed max-w-md">

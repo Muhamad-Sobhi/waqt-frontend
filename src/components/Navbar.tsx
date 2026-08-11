@@ -43,9 +43,14 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <span className="text-2xl sm:text-3xl font-bold tracking-wider" style={{ color: '#D4A853' }}>
-              WAQT
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+            <img 
+              src="/logo.png" 
+              alt="Waqt Logo" 
+              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" 
+            />
+            <span className="text-xl sm:text-2xl font-black tracking-[0.25em] uppercase text-[#1a1a2e] group-hover:text-[#D4A853] transition-colors duration-300">
+              Waqt
             </span>
           </Link>
 
@@ -71,7 +76,7 @@ export function Navbar() {
 
           {/* Cart + Mobile */}
           <div className="flex items-center gap-4">
-            <Link href="/cart" className={`relative p-2 ${cartBounce ? 'animate-cart-bounce' : ''}`}>
+            <Link href="/cart" aria-label="Shopping Cart" className={`relative p-2 ${cartBounce ? 'animate-cart-bounce' : ''}`}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#1a1a2e]">
                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
                 <line x1="3" y1="6" x2="21" y2="6" />
@@ -87,6 +92,8 @@ export function Navbar() {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle mobile menu"
+              aria-expanded={mobileOpen}
               className="md:hidden p-2 text-[#1a1a2e]"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

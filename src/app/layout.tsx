@@ -8,6 +8,9 @@ import { SessionTracker } from '@/components/SessionTracker';
 export const metadata: Metadata = {
   title: 'Waqt | وقت — Timeless Elegance',
   description: 'Premium watch store — curated collection of luxury and everyday watches, delivered to your doorstep.',
+  icons: {
+    icon: '/logo.png',
+  }
 };
 
 export default function RootLayout({
