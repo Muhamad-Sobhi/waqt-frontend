@@ -1,4 +1,6 @@
 import { MetadataRoute } from 'next'
+import { collection, getDocs, query } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 
 const BASE_URL = 'https://waqt-watches.vercel.app'
 
@@ -35,7 +37,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 }
 
 async function getProducts() {
-  // TODO: get products from your database/API
-
-  return []
+  try {
+    const q = query(collection(db, 'products'))
+    const snapshot = await getDocs(q)
+    return snapshot.docs.map(doc => {
+      const data = doc.data()
+      return {
+        id: doc.id,
+        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : data.updatedAt,
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching products for sitemap:', error)
+    return []
+  }
 }
