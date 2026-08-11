@@ -188,16 +188,20 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                   <Link href={`/products/${product.id}`} className="block relative aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
                     {product.images && product.images.length > 0 ? (
                       <>
-                        <img 
+                        <Image 
                           src={product.images[0]} 
                           alt={product.name}
-                          className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${product.images[1] ? 'group-hover:opacity-0' : ''}`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                          className={`object-cover transition-all duration-500 group-hover:scale-105 ${product.images[1] ? 'group-hover:opacity-0' : ''}`}
                         />
                         {product.images[1] && (
-                          <img 
+                          <Image 
                             src={product.images[1]} 
                             alt={`${product.name} alternate`}
-                            className="absolute inset-0 w-full h-full object-cover transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-105"
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                            className="absolute inset-0 object-cover transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-105"
                           />
                         )}
                       </>

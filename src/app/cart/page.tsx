@@ -40,16 +40,15 @@ export default function CartPage() {
               >
                 <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-gray-50 rounded-xl overflow-hidden">
                   {item.image ? (
-                    <img 
+                    <Image 
                       src={item.image} 
                       alt={item.name} 
-                      className="object-cover w-full h-full" 
-                      onError={(e) => {
-                        e.currentTarget.src = '/placeholder-watch.svg';
-                      }}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover" 
                     />
                   ) : (
-                    <img src="/placeholder-watch.svg" alt="Placeholder" className="object-cover w-full h-full" />
+                    <Image src="/placeholder-watch.svg" alt="Placeholder" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
                   )}
                 </div>
                 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/CartProvider';
 
@@ -114,9 +115,21 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                   <div className="relative aspect-square rounded-xl bg-gray-100 mb-4 overflow-hidden">
                     {product.images && product.images[0] ? (
                       <>
-                        <img src={product.images[0]} alt={product.name} className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${product.images[1] ? 'group-hover:opacity-0' : ''}`} />
+                        <Image 
+                          src={product.images[0]} 
+                          alt={product.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className={`object-cover transition-all duration-500 group-hover:scale-105 ${product.images[1] ? 'group-hover:opacity-0' : ''}`}
+                        />
                         {product.images[1] && (
-                          <img src={product.images[1]} alt={`${product.name} alternate`} className="absolute inset-0 w-full h-full object-cover transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-105" />
+                          <Image 
+                            src={product.images[1]} 
+                            alt={`${product.name} alternate`}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="absolute inset-0 object-cover transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-105"
+                          />
                         )}
                       </>
                     ) : (
