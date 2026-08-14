@@ -249,12 +249,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
             {/* Thumbnails */}
             {product.images && product.images.length > 1 && (
-              <div className="flex gap-4 overflow-x-auto pb-2 snap-x">
+              <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-2 snap-x hide-scrollbar">
                 {product.images.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
-                    className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden flex-shrink-0 snap-start transition-all ${
+                    className={`relative w-16 h-16 sm:w-24 sm:h-24 rounded-xl overflow-hidden flex-shrink-0 snap-start transition-all ${
                       selectedImage === idx 
                         ? 'border-2 border-[#D4A853] shadow-md ring-2 ring-[#D4A853]/20' 
                         : 'border border-gray-200 hover:border-[#D4A853]/50 opacity-70 hover:opacity-100'
@@ -359,11 +359,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
 
-            <div className="flex gap-4 mb-8">
+            <div className="flex gap-3 sm:gap-4 fixed sm:relative bottom-0 left-0 right-0 p-4 sm:p-0 bg-white/95 sm:bg-transparent backdrop-blur-md sm:backdrop-blur-none border-t border-gray-200 sm:border-0 z-40 sm:z-auto shadow-[0_-4px_10px_rgba(0,0,0,0.05)] sm:shadow-none mb-0 sm:mb-8">
               <button 
                 onClick={handleAddToCart}
                 disabled={product.stockQuantity === 0}
-                className="bg-[#1a1a2e] text-white flex-1 py-4 rounded-xl text-lg font-semibold shadow-md transition-all hover:bg-[#D4A853] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-[#1a1a2e] text-white flex-1 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold shadow-md transition-all hover:bg-[#D4A853] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {product.stockQuantity > 0 ? 'Add to Cart 🛒' : 'Out of Stock'}
               </button>
@@ -374,30 +374,30 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   router.push('/checkout');
                 }}
                 disabled={product.stockQuantity === 0}
-                className="btn-gold flex-1 py-4 rounded-xl text-lg font-semibold shadow-md transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-gold flex-1 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold shadow-md transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {product.stockQuantity > 0 ? 'Buy Now ⚡' : 'Out of Stock'}
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 border-t border-gray-200 pt-8 mt-auto">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 border-t border-gray-200 pt-8 mt-auto pb-20 sm:pb-0">
               <div className="flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mb-2">
-                  <span className="text-blue-600 text-lg">✓</span>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-50 flex items-center justify-center mb-2">
+                  <span className="text-blue-600 text-base sm:text-lg">✓</span>
                 </div>
-                <span className="text-xs font-medium text-gray-600">100% Authentic</span>
+                <span className="text-[10px] sm:text-xs font-medium text-gray-600">100% Authentic</span>
               </div>
               <div className="flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center mb-2">
-                  <span className="text-green-600 text-lg">✓</span>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-50 flex items-center justify-center mb-2">
+                  <span className="text-green-600 text-base sm:text-lg">✓</span>
                 </div>
-                <span className="text-xs font-medium text-gray-600">Free Shipping</span>
+                <span className="text-[10px] sm:text-xs font-medium text-gray-600">Free Shipping</span>
               </div>
               <div className="flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center mb-2">
-                  <span className="text-purple-600 text-lg">✓</span>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-purple-50 flex items-center justify-center mb-2">
+                  <span className="text-purple-600 text-base sm:text-lg">✓</span>
                 </div>
-                <span className="text-xs font-medium text-gray-600">Cash on Delivery</span>
+                <span className="text-[10px] sm:text-xs font-medium text-gray-600">Cash on Delivery</span>
               </div>
             </div>
           </div>

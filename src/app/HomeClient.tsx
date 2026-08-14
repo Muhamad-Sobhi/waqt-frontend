@@ -52,20 +52,20 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
       {/* 1. Hero Section */}
       <section className="w-full bg-gradient-to-b from-[#f5f0e8] to-[#FAFAFA] pt-20 pb-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6 animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl font-bold text-[#1a1a2e] tracking-tight">
+          <div className="space-y-6 animate-fade-in-up text-center md:text-left flex flex-col items-center md:items-start">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#1a1a2e] tracking-tight">
               Timeless Elegance
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 max-w-lg">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-lg mx-auto md:mx-0">
               Discover our curated collection of premium watches and luxury wallets. Elevate your style with accessories that speak volumes.
             </p>
-            <div className="pt-4 flex gap-4">
+            <div className="pt-4 flex gap-4 justify-center md:justify-start">
               <Link href="/products" className="btn-primary px-8 py-4 rounded-xl bg-gradient-to-r from-[#1a1a2e] to-[#2d2d44] text-white font-bold hover:shadow-[0_0_20px_rgba(26,26,46,0.3)] hover:-translate-y-1 transition-all">
                 Shop Now
               </Link>
             </div>
             
-            <div className="pt-8 flex flex-wrap gap-4 text-sm font-medium text-gray-700">
+            <div className="pt-8 flex flex-wrap justify-center md:justify-start gap-4 text-xs sm:text-sm font-medium text-gray-700">
               <span className="flex items-center gap-1"><span className="text-[#D4A853]">✓</span> Free Shipping</span>
               <span className="flex items-center gap-1"><span className="text-[#D4A853]">✓</span> Cash on Delivery</span>
               <span className="flex items-center gap-1"><span className="text-[#D4A853]">✓</span> Authentic Products</span>
@@ -154,13 +154,13 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
           </h2>
         </div>
 
-        <div className="flex justify-center mb-10">
-          <div className="flex bg-white rounded-xl border border-gray-200 p-1 shadow-sm">
+        <div className="flex justify-center mb-10 w-full overflow-hidden">
+          <div className="flex bg-white rounded-xl border border-gray-200 p-1 shadow-sm overflow-x-auto hide-scrollbar max-w-full">
             {['All', 'Watches', 'Wallets'].map(cat => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 sm:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                   selectedCategory === cat 
                     ? 'bg-[#1a1a2e] text-[#D4A853]' 
                     : 'text-gray-500 hover:text-[#1a1a2e]'
@@ -173,26 +173,26 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className={`skeleton bg-gray-200 animate-pulse h-80 rounded-2xl stagger-${(i % 4) + 1}`}></div>
+              <div key={i} className={`skeleton bg-gray-200 animate-pulse h-64 sm:h-80 rounded-2xl stagger-${(i % 4) + 1}`}></div>
             ))}
           </div>
         ) : error ? (
           <div className="text-center text-red-500 py-10">{error}</div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
               {displayProducts.slice(0, 8).map((product, idx) => (
-                <div key={product.id} className={`product-card animate-fade-in-up group bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col hover:-translate-y-1 transition-transform stagger-${(idx % 8) + 1}`}>
-                  <Link href={`/products/${product.id}`} className="block relative aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
+                <div key={product.id} className={`product-card animate-fade-in-up group bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-gray-100 flex flex-col hover:-translate-y-1 transition-transform stagger-${(idx % 8) + 1}`}>
+                  <Link href={`/products/${product.id}`} className="block relative aspect-square rounded-xl overflow-hidden bg-gray-50 mb-3 sm:mb-4">
                     {product.images && product.images.length > 0 ? (
                       <>
                         <Image 
                           src={product.images[0]} 
                           alt={product.name}
                           fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                          sizes="(max-width: 768px) 50vw, 25vw"
                           className={`object-cover transition-all duration-500 group-hover:scale-105 ${product.images[1] ? 'group-hover:opacity-0' : ''}`}
                         />
                         {product.images[1] && (
@@ -200,7 +200,7 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                             src={product.images[1]} 
                             alt={`${product.name} alternate`}
                             fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                            sizes="(max-width: 768px) 50vw, 25vw"
                             className="absolute inset-0 object-cover transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-105"
                           />
                         )}
@@ -211,27 +211,27 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                       </div>
                     )}
                   </Link>
-                  <div className="flex-grow">
+                  <div className="flex-grow flex flex-col">
                     <div className="flex justify-between items-start mb-1">
-                      <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{product.brand}</p>
-                      <div className="flex text-amber-400 text-xs">
+                      <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider font-semibold">{product.brand}</p>
+                      <div className="flex text-amber-400 text-[10px] sm:text-xs">
                         ★★★★★
                       </div>
                     </div>
                     <Link href={`/products/${product.id}`}>
-                      <h3 className="font-semibold text-[#1a1a2e] hover:text-[#D4A853] transition-colors line-clamp-2 mb-2">
+                      <h3 className="font-semibold text-sm sm:text-base text-[#1a1a2e] hover:text-[#D4A853] transition-colors line-clamp-2 mb-1 sm:mb-2 leading-tight">
                         {product.name}
                       </h3>
                     </Link>
                   </div>
-                  <div className="flex items-center justify-between mt-4">
-                    <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#D4A853] to-[#B8860B] text-lg drop-shadow-sm">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-auto pt-2 gap-2">
+                    <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#D4A853] to-[#B8860B] text-sm sm:text-lg drop-shadow-sm">
                       {product.price.toLocaleString('en-US')} EGP
                     </span>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5 sm:gap-2 w-full sm:w-auto">
                       <button 
                         onClick={(e) => { e.preventDefault(); handleAddToCart(product); }}
-                        className="px-3 py-1.5 rounded-xl text-sm font-bold text-[#1a1a2e] bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all flex items-center justify-center"
+                        className="p-2 sm:px-3 sm:py-1.5 rounded-xl text-xs sm:text-sm font-bold text-[#1a1a2e] bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all flex items-center justify-center"
                         title="Add to Cart"
                         aria-label="Add to Cart"
                       >
@@ -243,9 +243,9 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                           handleAddToCart(product); 
                           window.location.href = '/checkout';
                         }}
-                        className="px-3 py-1.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#1a1a2e] to-[#2d2d44] hover:from-[#D4A853] hover:to-[#B8860B] transition-all flex items-center justify-center"
+                        className="flex-1 sm:flex-none px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#1a1a2e] to-[#2d2d44] hover:from-[#D4A853] hover:to-[#B8860B] transition-all flex items-center justify-center"
                       >
-                        Buy Now ⚡
+                        Buy ⚡
                       </button>
                     </div>
                   </div>
@@ -265,10 +265,10 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
       {/* 3. Why Choose Us Section */}
       <section className="py-20 bg-white px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-10 md:mb-12">
             <h2 className="text-3xl font-bold text-[#1a1a2e]">Why Choose Waqt</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
             <div className="bg-white p-8 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 text-center hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-shadow">
               <div className="w-16 h-16 mx-auto bg-[#FAFAFA] rounded-full flex items-center justify-center text-3xl mb-4">
                 🔒
@@ -296,12 +296,12 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
 
       {/* 4. Social Media */}
       <section className="py-20 px-6 lg:px-8 bg-white border-y border-gray-100 text-center">
-        <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
-          <h2 className="text-3xl font-bold text-[#1a1a2e]">Join Our Community</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto space-y-6 md:space-y-8 animate-fade-in">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e]">Join Our Community</h2>
+          <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto px-4 md:px-0">
             Follow us on social media for the latest collections, exclusive offers, and watch styling tips.
           </p>
-          <div className="flex justify-center gap-6 pt-4">
+          <div className="flex justify-center gap-4 md:gap-6 pt-2 md:pt-4">
             <a href="https://www.facebook.com/share/1DNkUbSCwp/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center text-[#1a1a2e] hover:bg-[#1877F2] hover:text-white transition-all hover:scale-110 shadow-sm border border-gray-100">
               <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" /></svg>
             </a>
@@ -317,11 +317,11 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
 
       {/* 5. CTA Banner */}
       <section className="py-24 px-6 lg:px-8 bg-gradient-to-br from-[#1a1a2e] to-[#2a2a4a] text-white text-center">
-        <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+        <div className="max-w-3xl mx-auto space-y-6 md:space-y-8 animate-fade-in">
+          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight">
             Ready to find your perfect watch?
           </h2>
-          <p className="text-xl text-gray-300">
+          <p className="text-lg md:text-xl text-gray-300">
             Explore our vast collection of luxury timepieces and elevate your everyday style.
           </p>
           <div className="pt-4">

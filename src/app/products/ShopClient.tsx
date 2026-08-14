@@ -56,12 +56,12 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
           
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             {/* Category Filter Pills */}
-            <div className="flex bg-white rounded-xl border border-gray-200 p-1">
+            <div className="flex bg-white rounded-xl border border-gray-200 p-1 overflow-x-auto hide-scrollbar max-w-full">
               {['All', 'Watches', 'Wallets'].map(cat => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 sm:px-6 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                     selectedCategory === cat 
                       ? 'bg-[#1a1a2e] text-[#D4A853]' 
                       : 'text-gray-500 hover:text-[#1a1a2e]'
@@ -98,9 +98,9 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white rounded-xl p-4 shadow-sm skeleton h-[350px]"></div>
+              <div key={i} className="bg-white rounded-xl p-3 sm:p-4 shadow-sm skeleton h-[250px] sm:h-[350px]"></div>
             ))}
           </div>
         ) : filteredAndSortedProducts.length === 0 ? (
@@ -108,18 +108,18 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
             <p className="text-xl">No watches found matching your search.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {filteredAndSortedProducts.map((product, index) => (
-              <div key={product.id} className="product-card bg-white rounded-xl p-4 shadow-sm flex flex-col group animate-fade-in-up" style={{ animationDelay: `${index * 50}ms` }}>
-                <Link href={`/products/${product.id}`} className="flex-grow">
-                  <div className="relative aspect-square rounded-xl bg-gray-100 mb-4 overflow-hidden">
+              <div key={product.id} className="product-card bg-white rounded-xl p-3 sm:p-4 shadow-sm flex flex-col group animate-fade-in-up" style={{ animationDelay: `${index * 50}ms` }}>
+                <Link href={`/products/${product.id}`} className="flex-grow flex flex-col">
+                  <div className="relative aspect-square rounded-xl bg-gray-100 mb-3 sm:mb-4 overflow-hidden">
                     {product.images && product.images[0] ? (
                       <>
                         <Image 
                           src={product.images[0]} 
                           alt={product.name}
                           fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          sizes="(max-width: 768px) 50vw, 33vw"
                           className={`object-cover transition-all duration-500 group-hover:scale-105 ${product.images[1] ? 'group-hover:opacity-0' : ''}`}
                         />
                         {product.images[1] && (
@@ -127,7 +127,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                             src={product.images[1]} 
                             alt={`${product.name} alternate`}
                             fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            sizes="(max-width: 768px) 50vw, 33vw"
                             className="absolute inset-0 object-cover transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-105"
                           />
                         )}
@@ -136,20 +136,20 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                       <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
                     )}
                     {product.stockQuantity === 0 && (
-                      <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md">
+                      <div className="absolute top-2 right-2 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded-md">
                         OUT OF STOCK
                       </div>
                     )}
                   </div>
                   <div className="flex justify-between items-start mb-1 mt-1">
-                    <p className="text-xs uppercase tracking-wider text-gray-400">{product.brand}</p>
-                    <div className="flex text-amber-400 text-xs">★★★★★</div>
+                    <p className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-400">{product.brand}</p>
+                    <div className="flex text-amber-400 text-[10px] sm:text-xs">★★★★★</div>
                   </div>
-                  <h3 className="font-semibold text-[#1a1a2e] mb-2 line-clamp-2">{product.name}</h3>
+                  <h3 className="font-semibold text-sm sm:text-base text-[#1a1a2e] mb-1 sm:mb-2 line-clamp-2 leading-tight">{product.name}</h3>
                 </Link>
-                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 gap-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-auto pt-2 sm:pt-4 border-t border-gray-100 gap-2">
                   <span className="text-[#D4A853] font-bold text-sm sm:text-base">{product.price.toLocaleString('en-US')} EGP</span>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5 sm:gap-2 w-full sm:w-auto">
                     <button 
                       onClick={() => addItem({
                         productId: product.id,
@@ -159,7 +159,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                         image: product.images?.[0] || '',
                       })}
                       disabled={product.stockQuantity === 0}
-                      className="btn-primary px-3 py-1.5 text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 sm:px-3 sm:py-1.5 text-xs sm:text-sm rounded-xl font-bold text-[#1a1a2e] bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                       title="Add to Cart"
                     >
                       🛒
@@ -176,9 +176,9 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                         router.push('/checkout');
                       }}
                       disabled={product.stockQuantity === 0}
-                      className="bg-[#1a1a2e] text-white hover:bg-[#D4A853] transition-colors px-3 py-1.5 text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium whitespace-nowrap"
+                      className="flex-1 sm:flex-none px-2 py-1.5 sm:px-3 sm:py-1.5 text-xs sm:text-sm rounded-xl font-bold text-white bg-[#1a1a2e] hover:bg-[#D4A853] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                     >
-                      Buy Now ⚡
+                      Buy ⚡
                     </button>
                   </div>
                 </div>

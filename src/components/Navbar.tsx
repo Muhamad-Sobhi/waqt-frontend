@@ -79,15 +79,15 @@ export function Navbar() {
           </nav>
 
           {/* Cart + Mobile */}
-          <div className="flex items-center gap-4">
-            <Link href="/cart" aria-label="Shopping Cart" className={`relative p-2 ${cartBounce ? 'animate-cart-bounce' : ''}`}>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/cart" aria-label="Shopping Cart" className={`relative p-2.5 sm:p-3 rounded-full hover:bg-gray-50 transition-colors ${cartBounce ? 'animate-cart-bounce' : ''}`}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#1a1a2e]">
                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 01-8 0" />
               </svg>
               {totalItems > 0 && (
-                <span className="badge-gold absolute -top-1 -right-1">
+                <span className="badge-gold absolute top-0 right-0 sm:-top-1 sm:-right-1">
                   {totalItems}
                 </span>
               )}
@@ -98,9 +98,9 @@ export function Navbar() {
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle mobile menu"
               aria-expanded={mobileOpen}
-              className="md:hidden p-2 text-[#1a1a2e]"
+              className="md:hidden p-2.5 rounded-full hover:bg-gray-50 transition-colors text-[#1a1a2e]"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 {mobileOpen ? (
                   <>
                     <line x1="18" y1="6" x2="6" y2="18" />
@@ -120,15 +120,15 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="md:hidden pb-4 animate-fade-in">
+          <div className="md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-xl px-4 py-6 animate-fade-in flex flex-col gap-2 z-40">
             {links.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className={`block py-3 px-4 text-sm font-medium rounded-lg transition-colors ${
+                className={`block py-4 px-6 text-base font-bold rounded-xl transition-all ${
                   pathname === link.href
-                    ? 'text-[#D4A853] bg-amber-50'
+                    ? 'text-[#D4A853] bg-amber-50/50 translate-x-2'
                     : 'text-gray-600 hover:text-[#1a1a2e] hover:bg-gray-50'
                 }`}
               >

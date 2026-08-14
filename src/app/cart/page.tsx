@@ -36,9 +36,9 @@ export default function CartPage() {
             {items.map((item, index) => (
               <div 
                 key={item.productId} 
-                className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center gap-6 animate-fade-in-up stagger-${Math.min(index + 1, 8)}`}
+                className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 flex flex-row items-start sm:items-center gap-4 sm:gap-6 animate-fade-in-up stagger-${Math.min(index + 1, 8)}`}
               >
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-gray-50 rounded-xl overflow-hidden">
+                <div className="relative w-20 h-20 sm:w-32 sm:h-32 flex-shrink-0 bg-gray-50 rounded-xl overflow-hidden">
                   {item.image ? (
                     <Image 
                       src={item.image} 
@@ -52,48 +52,54 @@ export default function CartPage() {
                   )}
                 </div>
                 
-                <div className="flex-grow text-center sm:text-left flex flex-col justify-between h-full w-full">
+                <div className="flex-grow text-left flex flex-col justify-between h-full w-full">
                   <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="text-sm text-gray-500 mb-1 uppercase tracking-wider">{item.brand}</p>
-                      <h3 className="text-lg font-semibold text-[#1a1a2e] line-clamp-1">{item.name}</h3>
+                    <div className="pr-2">
+                      <p className="text-xs sm:text-sm text-gray-500 mb-0.5 sm:mb-1 uppercase tracking-wider">{item.brand}</p>
+                      <h3 className="text-sm sm:text-lg font-semibold text-[#1a1a2e] line-clamp-2 sm:line-clamp-1 leading-tight">{item.name}</h3>
                     </div>
                     <button 
                       onClick={() => removeItem(item.productId)}
-                      className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors hidden sm:block"
+                      className="p-2 -mr-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors hidden sm:block"
                       aria-label="Remove item"
                     >
                       ✕
                     </button>
                   </div>
                   
-                  <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4 sm:gap-0">
-                    <div className="flex items-center gap-4 bg-gray-50 rounded-lg p-1 border border-gray-200">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-2 sm:mt-4 gap-3 sm:gap-0">
+                    <div className="flex items-center justify-between w-full sm:w-auto">
+                      <p className="font-bold text-[#D4A853] text-sm sm:text-base sm:hidden">
+                        {(item.price * item.quantity).toLocaleString()} EGP
+                      </p>
+                      <button 
+                        onClick={() => removeItem(item.productId)}
+                        className="p-2 -mr-2 text-red-400 hover:text-red-600 sm:hidden bg-red-50/50 rounded-lg"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-4 bg-gray-50 rounded-lg p-1 border border-gray-200 w-fit">
                       <button 
                         onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                        className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow-sm text-gray-600 hover:text-[#D4A853] transition-colors font-bold"
+                        className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center rounded-md bg-white shadow-sm text-gray-600 hover:text-[#D4A853] transition-colors font-bold text-lg"
                       >
                         −
                       </button>
                       <span className="w-6 text-center font-medium">{item.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                        className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow-sm text-gray-600 hover:text-[#D4A853] transition-colors font-bold"
+                        className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center rounded-md bg-white shadow-sm text-gray-600 hover:text-[#D4A853] transition-colors font-bold text-lg"
                       >
                         +
                       </button>
                     </div>
                     
-                    <div className="flex items-center justify-between w-full sm:w-auto">
+                    <div className="hidden sm:block">
                       <p className="font-bold text-[#D4A853]">
                         {(item.price * item.quantity).toLocaleString()} EGP
                       </p>
-                      <button 
-                        onClick={() => removeItem(item.productId)}
-                        className="p-2 text-red-400 hover:text-red-600 sm:hidden"
-                      >
-                        ✕
-                      </button>
                     </div>
                   </div>
                 </div>
