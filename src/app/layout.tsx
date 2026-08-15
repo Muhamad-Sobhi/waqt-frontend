@@ -5,6 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { CartProvider } from '@/components/CartProvider';
 import { SessionTracker } from '@/components/SessionTracker';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const cairo = Cairo({ subsets: ['arabic'], variable: '--font-arabic' });
@@ -40,6 +41,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </CartProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
