@@ -4,6 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/components/CartProvider';
+import { useActiveOffer } from '@/components/OfferProvider';
+import { calculateDiscountedPrice } from '@/lib/pricing';
+import { useEffect } from 'react';
+import { collection, getDocs, query, limit } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface Product {
   id: string;
@@ -18,11 +23,12 @@ interface Product {
 }
 
 export default function HomeClient({ initialProducts }: { initialProducts: Product[] }) {
-  const [products] = useState<Product[]>(initialProducts);
-  const [loading] = useState(false);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [loading, setLoading] = useState(initialProducts.length === 0);
   const [error] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const { addItem } = useCart();
+  const { offer } = useActiveOffer();
 
   // Filter out inactive/unavailable products and sort by createdAt desc if available
   const activeProducts = products
@@ -35,7 +41,27 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
 
   const displayProducts = activeProducts.filter(p => selectedCategory === 'All' || p.category === selectedCategory);
 
-  // Products are fetched via SSR
+  useEffect(() => {
+    if (initialProducts.length === 0) {
+      const fetchProducts = async () => {
+        try {
+          const q = query(collection(db, 'products'), limit(8));
+          const snapshot = await getDocs(q);
+          const fetchedProducts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as Product[];
+          
+          setProducts(fetchedProducts);
+        } catch (error) {
+          console.error("Error fetching products on client:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchProducts();
+    }
+  }, [initialProducts]);
 
   const handleAddToCart = (product: Product) => {
     addItem({
@@ -105,9 +131,31 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                             <div className="w-full h-full flex items-center justify-center text-4xl">⌚</div>
                           )}
                           <div className="absolute top-2 right-2 bg-[#1a1a2e] text-white text-xs font-bold px-2 py-1 rounded-lg">Featured</div>
+                          {(() => {
+                            const p = calculateDiscountedPrice(heroWatch.price, heroWatch.id, offer);
+                            if (p.hasDiscount && p.discountBadge) {
+                              return (
+                                <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-black px-2 py-1 rounded-lg shadow-sm animate-pulse">
+                                  {p.discountBadge}
+                                </div>
+                              );
+                            }
+                            return null;
+                          })()}
                         </div>
                         <h2 className="font-bold text-[#1a1a2e] truncate">{heroWatch.name}</h2>
-                        <p className="text-[#D4A853] font-bold mt-1 text-lg">{heroWatch.price.toLocaleString('en-US')} EGP</p>
+                        
+                        {(() => {
+                          const p = calculateDiscountedPrice(heroWatch.price, heroWatch.id, offer);
+                          return (
+                            <div className="mt-1 flex items-center gap-2">
+                              {p.hasDiscount && (
+                                <span className="text-gray-400 line-through text-sm">{p.originalPrice.toLocaleString()} EGP</span>
+                              )}
+                              <p className="text-[#D4A853] font-bold text-lg">{p.finalPrice.toLocaleString()} EGP</p>
+                            </div>
+                          );
+                        })()}
                       </Link>
                     )}
 
@@ -127,10 +175,31 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-3xl">👛</div>
                           )}
-                          <div className="absolute top-2 left-2 bg-[#D4A853] text-[#1a1a2e] text-xs font-bold px-2 py-1 rounded-lg">Trending</div>
+                          <div className="absolute top-2 right-2 bg-[#D4A853] text-[#1a1a2e] text-xs font-bold px-2 py-1 rounded-lg">Trending</div>
+                          {(() => {
+                            const p = calculateDiscountedPrice(heroWallet.price, heroWallet.id, offer);
+                            if (p.hasDiscount && p.discountBadge) {
+                              return (
+                                <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-black px-2 py-1 rounded-lg shadow-sm animate-pulse">
+                                  {p.discountBadge}
+                                </div>
+                              );
+                            }
+                            return null;
+                          })()}
                         </div>
                         <h2 className="font-bold text-[#1a1a2e] truncate text-sm">{heroWallet.name}</h2>
-                        <p className="text-[#D4A853] font-bold mt-1 text-sm">{heroWallet.price.toLocaleString('en-US')} EGP</p>
+                        {(() => {
+                          const p = calculateDiscountedPrice(heroWallet.price, heroWallet.id, offer);
+                          return (
+                            <div className="mt-1 flex items-center gap-2 flex-wrap">
+                              {p.hasDiscount && (
+                                <span className="text-gray-400 line-through text-xs">{p.originalPrice.toLocaleString()} EGP</span>
+                              )}
+                              <p className="text-[#D4A853] font-bold text-sm">{p.finalPrice.toLocaleString()} EGP</p>
+                            </div>
+                          );
+                        })()}
                       </Link>
                     )}
                   </div>
@@ -156,17 +225,17 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
 
         <div className="flex justify-center mb-10 w-full overflow-hidden">
           <div className="flex bg-white rounded-xl border border-gray-200 p-1 shadow-sm overflow-x-auto hide-scrollbar max-w-full">
-            {['All', 'Watches', 'Wallets'].map(cat => (
+            {['All', ...Array.from(new Set(activeProducts.map(p => p.category).filter(Boolean)))].map(cat => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => setSelectedCategory(cat as string)}
                 className={`px-4 sm:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                   selectedCategory === cat 
                     ? 'bg-[#1a1a2e] text-[#D4A853]' 
                     : 'text-gray-500 hover:text-[#1a1a2e]'
                 }`}
               >
-                {cat}
+                {cat as string}
               </button>
             ))}
           </div>
@@ -210,6 +279,17 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                         ⌚
                       </div>
                     )}
+                    {(() => {
+                      const p = calculateDiscountedPrice(product.price, product.id, offer);
+                      if (p.hasDiscount && p.discountBadge) {
+                        return (
+                          <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] sm:text-xs font-black px-2 py-1 rounded-lg shadow-sm z-10">
+                            {p.discountBadge}
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                   </Link>
                   <div className="flex-grow flex flex-col">
                     <div className="flex justify-between items-start mb-1">
@@ -225,9 +305,21 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
                     </Link>
                   </div>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-auto pt-2 gap-2">
-                    <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#D4A853] to-[#B8860B] text-sm sm:text-lg drop-shadow-sm">
-                      {product.price.toLocaleString('en-US')} EGP
-                    </span>
+                    <div className="flex flex-col">
+                      {(() => {
+                        const p = calculateDiscountedPrice(product.price, product.id, offer);
+                        return (
+                          <>
+                            {p.hasDiscount && (
+                              <span className="text-gray-400 line-through text-xs">{p.originalPrice.toLocaleString()} EGP</span>
+                            )}
+                            <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#D4A853] to-[#B8860B] text-sm sm:text-lg drop-shadow-sm">
+                              {p.finalPrice.toLocaleString()} EGP
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
                     <div className="flex gap-1.5 sm:gap-2 w-full sm:w-auto">
                       <button 
                         onClick={(e) => { e.preventDefault(); handleAddToCart(product); }}

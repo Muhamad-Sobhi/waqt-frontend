@@ -26,6 +26,7 @@ export default async function ShopPage() {
     return <ShopClient initialProducts={products} />;
   } catch (error: any) {
     console.error('Error fetching products for SSR:', error);
-    return <div>Error: {error.message}</div>;
+    // Return empty array to fallback to client side rendering
+    return <ShopClient initialProducts={[]} />;
   }
 }

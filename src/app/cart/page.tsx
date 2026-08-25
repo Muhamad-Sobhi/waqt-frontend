@@ -4,9 +4,12 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/components/CartProvider';
+import { useActiveOffer } from '@/components/OfferProvider';
+import { calculateDiscountedPrice } from '@/lib/pricing';
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, totalPrice, totalItems } = useCart();
+  const { items, removeItem, updateQuantity, totalPrice, originalTotalPrice, totalItems } = useCart();
+  const { offer } = useActiveOffer();
 
   if (items.length === 0) {
     return (
@@ -69,9 +72,19 @@ export default function CartPage() {
                   
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-2 sm:mt-4 gap-3 sm:gap-0">
                     <div className="flex items-center justify-between w-full sm:w-auto">
-                      <p className="font-bold text-[#D4A853] text-sm sm:text-base sm:hidden">
-                        {(item.price * item.quantity).toLocaleString()} EGP
-                      </p>
+                      {(() => {
+                        const p = calculateDiscountedPrice(item.price, item.productId, offer);
+                        return (
+                          <div className="flex flex-col sm:hidden">
+                            {p.hasDiscount && (
+                              <span className="text-gray-400 line-through text-[10px]">{p.originalPrice.toLocaleString()} EGP</span>
+                            )}
+                            <p className="font-bold text-[#D4A853] text-sm">
+                              {p.finalPrice.toLocaleString()} EGP
+                            </p>
+                          </div>
+                        );
+                      })()}
                       <button 
                         onClick={() => removeItem(item.productId)}
                         className="p-2 -mr-2 text-red-400 hover:text-red-600 sm:hidden bg-red-50/50 rounded-lg"
@@ -96,10 +109,20 @@ export default function CartPage() {
                       </button>
                     </div>
                     
-                    <div className="hidden sm:block">
-                      <p className="font-bold text-[#D4A853]">
-                        {(item.price * item.quantity).toLocaleString()} EGP
-                      </p>
+                    <div className="hidden sm:block text-right">
+                      {(() => {
+                        const p = calculateDiscountedPrice(item.price, item.productId, offer);
+                        return (
+                          <>
+                            {p.hasDiscount && (
+                              <div className="text-gray-400 line-through text-xs">{(p.originalPrice * item.quantity).toLocaleString()} EGP</div>
+                            )}
+                            <p className="font-bold text-[#D4A853]">
+                              {(p.finalPrice * item.quantity).toLocaleString()} EGP
+                            </p>
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -115,8 +138,14 @@ export default function CartPage() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-gray-600 mb-2">
                   <span>Subtotal</span>
-                  <span>{totalPrice.toLocaleString()} EGP</span>
+                  <span>{originalTotalPrice.toLocaleString()} EGP</span>
                 </div>
+                {originalTotalPrice > totalPrice && (
+                  <div className="flex justify-between text-red-600 font-bold bg-red-50 p-2 rounded-lg mb-2 border border-red-100">
+                    <span>Discount Saved</span>
+                    <span>-{(originalTotalPrice - totalPrice).toLocaleString()} EGP</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
                   <span className="text-green-600 font-medium">Free</span>

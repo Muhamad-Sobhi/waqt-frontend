@@ -1,10 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/CartProvider';
+import { useActiveOffer } from '@/components/OfferProvider';
+import { calculateDiscountedPrice } from '@/lib/pricing';
+import { collection, getDocs, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface Product {
   id: string;
@@ -20,28 +24,56 @@ interface Product {
 }
 
 export default function ShopClient({ initialProducts }: { initialProducts: Product[] }) {
-  // Filter out inactive/unavailable products first
-  const [products] = useState<Product[]>(
+  const [products, setProducts] = useState<Product[]>(
     initialProducts.filter(p => p.isActive !== false && p.isAvailable !== false)
   );
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(initialProducts.length === 0);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedBrand, setSelectedBrand] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
   const { addItem } = useCart();
+  const { offer } = useActiveOffer();
   const router = useRouter();
 
-  // SSR provides products instantly, no need for useEffect fetch
+  useEffect(() => {
+    if (initialProducts.length === 0) {
+      const fetchProducts = async () => {
+        try {
+          const q = query(collection(db, 'products'));
+          const snapshot = await getDocs(q);
+          const fetchedProducts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as Product[];
+          
+          setProducts(fetchedProducts.filter(p => p.isActive !== false && p.isAvailable !== false));
+        } catch (error) {
+          console.error("Error fetching products on client:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchProducts();
+    }
+  }, [initialProducts]);
+
+  // Extract unique brands and categories for filter
+  const uniqueBrands = ['All', ...Array.from(new Set(products.map(p => p.brand).filter(Boolean) as string[]))];
+  const uniqueCategories = ['All', ...Array.from(new Set(products.map(p => p.category).filter(Boolean) as string[]))];
 
   const filteredAndSortedProducts = products
     .filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory === 'All' || (product.category || 'Watches') === selectedCategory;
-      return matchesSearch && matchesCategory;
+      const matchesBrand = selectedBrand === 'All' || product.brand === selectedBrand;
+      return matchesSearch && matchesCategory && matchesBrand;
     })
     .sort((a, b) => {
-      if (sortBy === 'price-low') return a.price - b.price;
-      if (sortBy === 'price-high') return b.price - a.price;
+      const priceA = calculateDiscountedPrice(a.price, a.id, offer).finalPrice;
+      const priceB = calculateDiscountedPrice(b.price, b.id, offer).finalPrice;
+      if (sortBy === 'price-low') return priceA - priceB;
+      if (sortBy === 'price-high') return priceB - priceA;
       return 0; // newest could be handled if we had proper timestamps, for now just original order
     });
 
@@ -57,7 +89,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             {/* Category Filter Pills */}
             <div className="flex bg-white rounded-xl border border-gray-200 p-1 overflow-x-auto hide-scrollbar max-w-full">
-              {['All', 'Watches', 'Wallets'].map(cat => (
+              {uniqueCategories.map(cat => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
@@ -86,9 +118,19 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
             </div>
             
             <select 
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="py-2 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white text-[#1a1a2e] w-full sm:w-auto"
+            >
+              {uniqueBrands.map(b => (
+                <option key={b} value={b}>{b === 'All' ? 'All Brands' : b}</option>
+              ))}
+            </select>
+            
+            <select 
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="py-2 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white text-[#1a1a2e]"
+              className="py-2 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white text-[#1a1a2e] w-full sm:w-auto"
             >
               <option value="newest">Newest</option>
               <option value="price-low">Price: Low → High</option>
@@ -140,6 +182,17 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                         OUT OF STOCK
                       </div>
                     )}
+                    {(() => {
+                      const p = calculateDiscountedPrice(product.price, product.id, offer);
+                      if (p.hasDiscount && p.discountBadge) {
+                        return (
+                          <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] sm:text-xs font-black px-2 py-1 rounded-lg shadow-sm z-10">
+                            {p.discountBadge}
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
                   <div className="flex justify-between items-start mb-1 mt-1">
                     <p className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-400">{product.brand}</p>
@@ -148,7 +201,19 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                   <h3 className="font-semibold text-sm sm:text-base text-[#1a1a2e] mb-1 sm:mb-2 line-clamp-2 leading-tight">{product.name}</h3>
                 </Link>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-auto pt-2 sm:pt-4 border-t border-gray-100 gap-2">
-                  <span className="text-[#D4A853] font-bold text-sm sm:text-base">{product.price.toLocaleString('en-US')} EGP</span>
+                  <div className="flex flex-col">
+                    {(() => {
+                      const p = calculateDiscountedPrice(product.price, product.id, offer);
+                      return (
+                        <>
+                          {p.hasDiscount && (
+                            <span className="text-gray-400 line-through text-xs">{p.originalPrice.toLocaleString()} EGP</span>
+                          )}
+                          <span className="text-[#D4A853] font-bold text-sm sm:text-base">{p.finalPrice.toLocaleString()} EGP</span>
+                        </>
+                      );
+                    })()}
+                  </div>
                   <div className="flex gap-1.5 sm:gap-2 w-full sm:w-auto">
                     <button 
                       onClick={() => addItem({

@@ -4,13 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCart } from '@/components/CartProvider';
+import { useActiveOffer } from '@/components/OfferProvider';
+import { calculateDiscountedPrice } from '@/lib/pricing';
 import { getSessionId } from '@/components/SessionTracker';
-import { db } from '@/lib/firebase';
-import { collection, doc, writeBatch, serverTimestamp, increment } from 'firebase/firestore';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, totalPrice, originalTotalPrice, clearCart } = useCart();
+  const { offer } = useActiveOffer();
   
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState('');
@@ -91,82 +92,36 @@ export default function CheckoutPage() {
     }
 
     try {
-      const processedItems = items.map(item => ({
-        productId: item.productId,
-        productName: item.name,
-        quantity: item.quantity,
-        unitPrice: item.price,
-        imageUrl: item.image || '',
-      }));
-
-      const totalItemsInOrder = processedItems.reduce((acc, item) => acc + item.quantity, 0);
-      const totalAmount = totalPrice;
-
-      const batch = writeBatch(db);
-
-      // 1. Customer Profile
-      const customerRef = doc(db, 'customers', formData.phone);
-      batch.set(customerRef, {
-        fullName: formData.fullName,
-        phoneNumber: formData.phone,
-        defaultAddress: {
-          governorate: formData.governorate,
-          city: formData.city,
-          detailedAddress: formData.detailedAddress
-        },
-        totalOrdersCount: increment(1),
-        totalItemsBought: increment(totalItemsInOrder),
-        totalSpend: increment(totalAmount),
-        lastPurchaseDate: serverTimestamp(),
-      }, { merge: true });
-
-      // 2. Create Order
-      const orderRef = doc(collection(db, 'orders'));
-      batch.set(orderRef, {
-        customerPhone: formData.phone,
-        customerName: formData.fullName,
-        deliveryAddress: {
-          governorate: formData.governorate,
-          city: formData.city,
-          detailedAddress: formData.detailedAddress
-        },
-        orderNotes: formData.orderNotes || '',
-        paymentMethod: formData.paymentMethod || 'Cash on Delivery',
-        items: processedItems,
-        subtotal: totalAmount,
-        deliveryFee: 0,
-        totalPrice: totalAmount,
-        status: 'pending',
-        whatsappStatus: { sent: false },
-        trackingSessionId: getSessionId(),
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer: {
+            fullName: formData.fullName,
+            phone: formData.phone,
+            governorate: formData.governorate,
+            city: formData.city,
+            detailedAddress: formData.detailedAddress,
+          },
+          items: items.map(item => ({ productId: item.productId, quantity: item.quantity })),
+          orderNotes: formData.orderNotes,
+          paymentMethod: formData.paymentMethod,
+          sessionId: getSessionId(),
+        })
       });
 
-      // 3. Update Session
-      const sessionId = getSessionId();
-      if (sessionId) {
-        const sessionRef = doc(db, 'sessions', sessionId);
-        batch.set(sessionRef, {
-          linkedPhoneNumber: formData.phone,
-          lastActive: serverTimestamp(),
-        }, { merge: true });
+      let result;
+      const responseText = await response.text();
+      try {
+        result = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Failed to parse checkout API response as JSON. Raw response:', responseText);
+        throw new Error(`Server error. Please ensure the backend is running correctly.`);
       }
 
-      // 4. Create Notification
-      const notificationRef = doc(collection(db, 'notifications'));
-      batch.set(notificationRef, {
-        type: 'new_order',
-        title: 'New Order Received',
-        message: `Order from ${formData.fullName} for ${totalAmount.toLocaleString()} EGP`,
-        orderId: orderRef.id,
-        customerPhone: formData.phone,
-        isRead: false,
-        createdAt: serverTimestamp(),
-      });
-
-      // Execute all writes atomically
-      await batch.commit();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to process checkout');
+      }
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('userInfo', JSON.stringify({
@@ -401,9 +356,19 @@ export default function CheckoutPage() {
                         <h4 className="text-sm font-semibold text-[#1a1a2e] mb-1 break-words hover:text-[#D4A853] transition-colors">{item.name}</h4>
                       </Link>
                       <p className="text-xs text-gray-500 mb-1 uppercase font-medium">{item.brand}</p>
-                      <p className="text-sm font-medium text-[#D4A853]">
-                        {(item.price * item.quantity).toLocaleString()} EGP
-                      </p>
+                      {(() => {
+                        const p = calculateDiscountedPrice(item.price, item.productId, offer);
+                        return (
+                          <div className="flex flex-col">
+                            {p.hasDiscount && (
+                              <span className="text-gray-400 line-through text-xs">{(p.originalPrice * item.quantity).toLocaleString()} EGP</span>
+                            )}
+                            <p className="text-sm font-medium text-[#D4A853]">
+                              {(p.finalPrice * item.quantity).toLocaleString()} EGP
+                            </p>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 ))}
@@ -412,8 +377,14 @@ export default function CheckoutPage() {
               <div className="border-t border-gray-100 pt-4 space-y-3">
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Subtotal</span>
-                  <span>{totalPrice.toLocaleString()} EGP</span>
+                  <span>{originalTotalPrice.toLocaleString()} EGP</span>
                 </div>
+                {originalTotalPrice > totalPrice && (
+                  <div className="flex justify-between text-sm text-red-600 font-bold bg-red-50 p-2 rounded-lg border border-red-100 my-1">
+                    <span>Discount Saved</span>
+                    <span>-{(originalTotalPrice - totalPrice).toLocaleString()} EGP</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Shipping</span>
                   <span className="text-green-600 font-medium">Free</span>

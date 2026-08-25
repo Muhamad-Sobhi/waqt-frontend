@@ -1,6 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useActiveOffer } from '@/components/OfferProvider';
+import { calculateDiscountedPrice } from '@/lib/pricing';
 
 export interface CartItem {
   productId: string;
@@ -19,6 +21,7 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  originalTotalPrice: number;
 }
 
 const CartContext = createContext<CartContextType>({
@@ -29,6 +32,7 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {},
   totalItems: 0,
   totalPrice: 0,
+  originalTotalPrice: 0,
 });
 
 export const useCart = () => useContext(CartContext);
@@ -36,6 +40,7 @@ export const useCart = () => useContext(CartContext);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const { offer } = useActiveOffer();
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -92,10 +97,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
-  const totalPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  
+  // Calculate price with discounts
+  let originalTotalPrice = 0;
+  let totalPrice = 0;
+  
+  items.forEach(item => {
+    originalTotalPrice += item.price * item.quantity;
+    const { finalPrice } = calculateDiscountedPrice(item.price, item.productId, offer);
+    totalPrice += finalPrice * item.quantity;
+  });
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice }}>
+    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, originalTotalPrice }}>
       {children}
     </CartContext.Provider>
   );

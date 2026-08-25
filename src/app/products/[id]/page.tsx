@@ -7,6 +7,8 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc, collection, getDocs, addDoc, serverTimestamp, query, where, orderBy } from 'firebase/firestore';
 import { useCart } from '@/components/CartProvider';
 import { trackProductVisit } from '@/components/SessionTracker';
+import { useActiveOffer } from '@/components/OfferProvider';
+import { calculateDiscountedPrice } from '@/lib/pricing';
 
 interface Product {
   id: string;
@@ -30,6 +32,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [mousePosition, setMousePosition] = useState({ x: '50%', y: '50%' });
   const [isHovering, setIsHovering] = useState(false);
   const { addItem } = useCart();
+  const { offer } = useActiveOffer();
   const router = useRouter();
 
   // Reviews state
@@ -245,6 +248,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">No Image Available</div>
               )}
+              {(() => {
+                const p = calculateDiscountedPrice(product.price, product.id, offer);
+                if (p.hasDiscount && p.discountBadge) {
+                  return (
+                    <div className="absolute top-4 left-4 bg-red-600 text-white text-sm sm:text-base font-black px-3 py-1.5 rounded-lg shadow-md z-10 animate-pulse">
+                      {p.discountBadge}
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
 
             {/* Thumbnails */}
@@ -307,25 +321,42 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </button>
             </div>
 
-            <p className="text-2xl font-bold text-[#D4A853] mb-6">{product.price.toLocaleString('en-US')} EGP</p>
+            {(() => {
+              const p = calculateDiscountedPrice(product.price, product.id, offer);
+              return (
+                <div className="mb-6 flex flex-col items-start">
+                  {p.hasDiscount && (
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-gray-400 line-through text-lg">{p.originalPrice.toLocaleString('en-US')} EGP</span>
+                      <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded border border-red-200">
+                        SAVE {p.originalPrice - p.finalPrice} EGP
+                      </span>
+                    </div>
+                  )}
+                  <p className="text-4xl font-black text-[#D4A853]">{p.finalPrice.toLocaleString('en-US')} EGP</p>
+                </div>
+              );
+            })()}
             
             <div className="prose text-gray-600 mb-8 leading-relaxed whitespace-pre-wrap">
               {product.description}
             </div>
 
             {/* Specifications */}
-            {product.specifications && Object.keys(product.specifications).length > 0 && (
+            {product.specifications && Object.values(product.specifications).some(val => val && String(val).trim() !== '') && (
               <div className="mb-8">
                 <h3 className="font-semibold text-lg text-[#1a1a2e] mb-4">Specifications</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 text-sm">
-                  {Object.entries(product.specifications).map(([key, value]) => {
-                    const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                    return (
-                      <div key={key} className="flex justify-between border-b border-gray-100 py-2">
-                        <span className="text-gray-500 font-medium">{formattedKey}</span>
-                        <span className="text-gray-900 text-right font-medium">{String(value)}</span>
-                      </div>
-                    );
+                  {Object.entries(product.specifications)
+                    .filter(([_, value]) => value && String(value).trim() !== '')
+                    .map(([key, value]) => {
+                      const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                      return (
+                        <div key={key} className="flex justify-between border-b border-gray-100 py-2">
+                          <span className="text-gray-500 font-medium">{formattedKey}</span>
+                          <span className="text-gray-900 text-right font-medium">{String(value)}</span>
+                        </div>
+                      );
                   })}
                 </div>
               </div>
@@ -508,16 +539,37 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {relatedProducts.map(rel => (
                 <Link key={rel.id} href={`/products/${rel.id}`} className="group bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
+                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4 relative">
                     {rel.images?.[0] ? (
                       <img src={rel.images[0]} alt={rel.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
                     )}
+                    {(() => {
+                      const p = calculateDiscountedPrice(rel.price, rel.id, offer);
+                      if (p.hasDiscount && p.discountBadge) {
+                        return (
+                          <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] sm:text-xs font-black px-2 py-1 rounded-lg shadow-sm z-10">
+                            {p.discountBadge}
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
                   <p className="text-xs uppercase text-gray-500 font-semibold mb-1">{rel.brand}</p>
                   <h3 className="font-semibold text-[#1a1a2e] line-clamp-1 mb-2">{rel.name}</h3>
-                  <p className="text-[#D4A853] font-bold">{rel.price.toLocaleString('en-US')} EGP</p>
+                  {(() => {
+                    const p = calculateDiscountedPrice(rel.price, rel.id, offer);
+                    return (
+                      <div className="flex flex-col">
+                        {p.hasDiscount && (
+                          <span className="text-gray-400 line-through text-xs">{p.originalPrice.toLocaleString()} EGP</span>
+                        )}
+                        <p className="text-[#D4A853] font-bold">{p.finalPrice.toLocaleString()} EGP</p>
+                      </div>
+                    );
+                  })()}
                 </Link>
               ))}
             </div>

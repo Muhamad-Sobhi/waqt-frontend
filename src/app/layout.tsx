@@ -25,6 +25,9 @@ export const viewport: Viewport = {
   userScalable: true,
 };
 
+import OfferBanner from '@/components/OfferBanner';
+import { OfferProvider } from '@/components/OfferProvider';
+
 export default function RootLayout({
   children,
 }: {
@@ -33,14 +36,16 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning className={`${inter.variable} ${cairo.variable}`}>
       <body suppressHydrationWarning>
-        <CartProvider>
-          <SessionTracker />
-          <Navbar />
-          <main className="min-h-screen pt-16 sm:pt-20">
-            {children}
-          </main>
-          <Footer />
-        </CartProvider>
+        <OfferProvider>
+          <CartProvider>
+            <SessionTracker />
+            <Navbar />
+            <main className="min-h-screen pt-24 sm:pt-32">
+              {children}
+            </main>
+            <Footer />
+          </CartProvider>
+        </OfferProvider>
         <SpeedInsights />
       </body>
     </html>
