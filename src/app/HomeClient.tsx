@@ -92,7 +92,6 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
             </div>
             
             <div className="pt-8 flex flex-wrap justify-center md:justify-start gap-4 text-xs sm:text-sm font-medium text-gray-700">
-              <span className="flex items-center gap-1"><span className="text-[#D4A853]">✓</span> Free Shipping</span>
               <span className="flex items-center gap-1"><span className="text-[#D4A853]">✓</span> Cash on Delivery</span>
               <span className="flex items-center gap-1"><span className="text-[#D4A853]">✓</span> Authentic Products</span>
               <span className="flex items-center gap-1"><span className="text-[#D4A853]">✓</span> 24/7 Support</span>

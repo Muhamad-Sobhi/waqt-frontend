@@ -43,7 +43,7 @@ export function calculateDiscountedPrice(originalPrice: number, productId: strin
   } else if (offer.type === 'fixed') {
     discountBadge = `-${offer.value} EGP`;
   } else if (offer.type === 'free_shipping') {
-    discountBadge = 'Free Shipping';
+    discountBadge = 'شحن سريع';
   }
 
   return {
