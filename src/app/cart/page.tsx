@@ -8,7 +8,7 @@ import { useActiveOffer } from '@/components/OfferProvider';
 import { calculateDiscountedPrice } from '@/lib/pricing';
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, totalPrice, originalTotalPrice, totalItems } = useCart();
+  const { items, removeItem, updateQuantity, totalPrice, originalTotalPrice, totalItems, setCheckoutModalOpen } = useCart();
   const { offer } = useActiveOffer();
 
   if (items.length === 0) {
@@ -31,7 +31,7 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-[#FAFAFA] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-[#1a1a2e] mb-8">Shopping Cart ({totalItems})</h1>
+        <h1 className="text-3xl font-bold text-[#1a1a2e] mb-8">عربة التسوق ({totalItems})</h1>
         
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Cart Items */}
@@ -77,10 +77,10 @@ export default function CartPage() {
                         return (
                           <div className="flex flex-col sm:hidden">
                             {p.hasDiscount && (
-                              <span className="text-gray-400 line-through text-[10px]">{p.originalPrice.toLocaleString()} EGP</span>
+                              <span className="text-gray-400 line-through text-[10px]">{p.originalPrice.toLocaleString()} جنيه</span>
                             )}
                             <p className="font-bold text-[#D4A853] text-sm">
-                              {p.finalPrice.toLocaleString()} EGP
+                              {p.finalPrice.toLocaleString()} جنيه
                             </p>
                           </div>
                         );
@@ -115,10 +115,10 @@ export default function CartPage() {
                         return (
                           <>
                             {p.hasDiscount && (
-                              <div className="text-gray-400 line-through text-xs">{(p.originalPrice * item.quantity).toLocaleString()} EGP</div>
+                              <div className="text-gray-400 line-through text-xs">{(p.originalPrice * item.quantity).toLocaleString()} جنيه</div>
                             )}
                             <p className="font-bold text-[#D4A853]">
-                              {(p.finalPrice * item.quantity).toLocaleString()} EGP
+                              {(p.finalPrice * item.quantity).toLocaleString()} جنيه
                             </p>
                           </>
                         );
@@ -133,44 +133,44 @@ export default function CartPage() {
           {/* Order Summary */}
           <div className="lg:w-1/3">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 lg:sticky lg:top-24 animate-fade-in-up stagger-3">
-              <h2 className="text-xl font-bold text-[#1a1a2e] mb-6">Order Summary</h2>
+              <h2 className="text-xl font-bold text-[#1a1a2e] mb-6">ملخص الطلب</h2>
               
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-gray-600 mb-2">
-                  <span>Subtotal</span>
-                  <span>{originalTotalPrice.toLocaleString()} EGP</span>
+                  <span>المجموع الفرعي</span>
+                  <span>{originalTotalPrice.toLocaleString()} جنيه</span>
                 </div>
                 {originalTotalPrice > totalPrice && (
                   <div className="flex justify-between text-red-600 font-bold bg-red-50 p-2 rounded-lg mb-2 border border-red-100">
-                    <span>Discount Saved</span>
-                    <span>-{(originalTotalPrice - totalPrice).toLocaleString()} EGP</span>
+                    <span>قيمة الخصم</span>
+                    <span>-{(originalTotalPrice - totalPrice).toLocaleString()} جنيه</span>
                   </div>
                 )}
-                <div className="flex justify-between text-gray-600">
-                  <span>Shipping</span>
-                  <span className="text-green-600 font-medium">Free</span>
+                <div className="flex justify-between text-gray-600 items-center">
+                  <span>الشحن</span>
+                  <span className="text-gray-500 font-medium text-xs bg-gray-100 px-2 py-1 rounded">يُحدد عند الدفع</span>
                 </div>
               </div>
               
               <div className="border-t border-gray-100 pt-4 mb-6">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-lg font-semibold text-[#1a1a2e]">Total</span>
+                  <span className="text-lg font-semibold text-[#1a1a2e]">الإجمالي</span>
                   <span className="text-2xl font-bold text-[#D4A853]">
-                    {totalPrice.toLocaleString()} EGP
+                    {totalPrice.toLocaleString()} جنيه
                   </span>
                 </div>
               </div>
               
-              <Link 
-                href="/checkout" 
+              <button 
+                onClick={() => setCheckoutModalOpen(true)}
                 className="btn-gold w-full py-4 rounded-xl flex items-center justify-center gap-2 font-semibold text-lg hover:shadow-lg transition-shadow"
               >
-                Proceed to Checkout
-              </Link>
+                إتمام الطلب
+              </button>
               
               <div className="mt-4 text-center">
                 <Link href="/products" className="text-sm text-gray-500 hover:text-[#D4A853] transition-colors">
-                  Continue Shopping
+                  متابعة التسوق
                 </Link>
               </div>
             </div>

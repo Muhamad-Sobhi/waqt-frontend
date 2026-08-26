@@ -1,7 +1,41 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
+  const pathname = usePathname();
+  const isHome = pathname === '/';
+  
+  const t = isHome ? {
+    desc: 'Timeless elegance on your wrist. We curate the finest collection of watches from world-renowned brands, delivered to your doorstep with care and precision.',
+    quickLinks: 'Quick Links',
+    home: 'Home',
+    shop: 'Shop All',
+    cart: 'Shopping Cart',
+    contact: 'Contact',
+    whatsapp: 'WhatsApp Support',
+    cod: 'Cash on Delivery',
+    secure: 'Secure Shopping',
+    followUs: 'Follow Us',
+    rights: `© ${new Date().getFullYear()} Waqt Store. All rights reserved.`,
+    madeWith: 'Made with ❤️ for watch enthusiasts'
+  } : {
+    desc: 'أناقة لا تفنى على معصمك. ننتقي أفضل تشكيلة من الساعات من الماركات العالمية، وتصلك إلى باب منزلك بكل عناية ودقة.',
+    quickLinks: 'روابط سريعة',
+    home: 'الرئيسية',
+    shop: 'تسوق الآن',
+    cart: 'عربة التسوق',
+    contact: 'تواصل معنا',
+    whatsapp: 'دعم واتساب',
+    cod: 'الدفع عند الاستلام',
+    secure: 'تسوق آمن',
+    followUs: 'تابعنا',
+    rights: `© ${new Date().getFullYear()} متجر وقت. جميع الحقوق محفوظة.`,
+    madeWith: 'صُنع بحب ❤️ لعشاق الساعات'
+  };
+
   return (
     <footer className="bg-[#1a1a2e] text-white mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -23,30 +57,29 @@ export function Footer() {
               </span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed max-w-md">
-              Timeless elegance on your wrist. We curate the finest collection of watches 
-              from world-renowned brands, delivered to your doorstep with care and precision.
+              {t.desc}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-300 mb-4">
-              Quick Links
+              {t.quickLinks}
             </h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/" className="text-gray-400 hover:text-[#D4A853] transition-colors text-sm">
-                  Home
+                  {t.home}
                 </Link>
               </li>
               <li>
                 <Link href="/products" className="text-gray-400 hover:text-[#D4A853] transition-colors text-sm">
-                  Shop All
+                  {t.shop}
                 </Link>
               </li>
               <li>
                 <Link href="/cart" className="text-gray-400 hover:text-[#D4A853] transition-colors text-sm">
-                  Shopping Cart
+                  {t.cart}
                 </Link>
               </li>
             </ul>
@@ -55,17 +88,17 @@ export function Footer() {
           {/* Contact */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-300 mb-4">
-              Contact
+              {t.contact}
             </h3>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-gray-400 text-sm">
-                <span>📱</span> WhatsApp Support
+                <span>📱</span> {t.whatsapp}
               </li>
               <li className="flex items-center gap-2 text-gray-400 text-sm">
-                <span>📦</span> Cash on Delivery
+                <span>📦</span> {t.cod}
               </li>
               <li className="flex items-center gap-2 text-gray-400 text-sm">
-                <span>🔒</span> Secure Shopping
+                <span>🔒</span> {t.secure}
               </li>
             </ul>
           </div>
@@ -73,7 +106,7 @@ export function Footer() {
           {/* Social Media */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-300 mb-4">
-              Follow Us
+              {t.followUs}
             </h3>
             <div className="flex gap-4">
               <a href="https://www.facebook.com/share/1DNkUbSCwp/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-[#1877F2] hover:text-white transition-all">
@@ -92,10 +125,10 @@ export function Footer() {
 
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-xs">
-            © {new Date().getFullYear()} Waqt Store. All rights reserved.
+            {t.rights}
           </p>
           <p className="text-gray-500 text-xs">
-            Made with ❤️ for watch enthusiasts
+            {t.madeWith}
           </p>
         </div>
       </div>

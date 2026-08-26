@@ -76,7 +76,19 @@ export async function POST(req: Request) {
       };
     });
 
-    const totalAmount = subtotal; // delivery is 0 for now
+    // 3.5 Fetch Shipping Rate
+    let deliveryFee = 50; // Default fallback
+    try {
+      const settingsSnap = await adminDb.collection('settings').doc('shipping').get();
+      if (settingsSnap.exists) {
+        const rates = settingsSnap.data()?.rates || {};
+        deliveryFee = rates[customer.governorate] !== undefined ? rates[customer.governorate] : 50;
+      }
+    } catch (e) {
+      console.error('Error fetching shipping rates in checkout API', e);
+    }
+
+    const totalAmount = subtotal + deliveryFee;
     const totalItemsInOrder = processedItems.reduce((acc, item) => acc + item.quantity, 0);
 
     // 4. Perform Batched Writes
@@ -112,7 +124,7 @@ export async function POST(req: Request) {
       paymentMethod: paymentMethod || 'Cash on Delivery',
       items: processedItems,
       subtotal: subtotal,
-      deliveryFee: 0,
+      deliveryFee: deliveryFee,
       totalPrice: totalAmount,
       status: 'pending',
       whatsappStatus: { sent: false },
@@ -162,7 +174,8 @@ export async function POST(req: Request) {
       processedItems.forEach((item: any) => {
         tgMessage += `- ${item.productName} (x${item.quantity})\n`;
       });
-      tgMessage += `\n💰 <b>Total:</b> ${totalAmount} EGP\n`;
+      tgMessage += `\n🚚 <b>Shipping:</b> ${deliveryFee > 0 ? deliveryFee + ' EGP' : 'Free'}\n`;
+      tgMessage += `💰 <b>Total:</b> ${totalAmount} EGP\n`;
       tgMessage += `💳 <b>Payment:</b> ${paymentMethod}\n`;
       tgMessage += `🧾 <b>Order ID:</b> ${orderRef.id}\n`;
 

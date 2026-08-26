@@ -29,10 +29,10 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   );
   const [loading, setLoading] = useState(initialProducts.length === 0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedBrand, setSelectedBrand] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('الكل');
+  const [selectedBrand, setSelectedBrand] = useState('الكل');
   const [sortBy, setSortBy] = useState('newest');
-  const { addItem } = useCart();
+  const { addItem, setCheckoutModalOpen } = useCart();
   const { offer } = useActiveOffer();
   const router = useRouter();
 
@@ -59,14 +59,14 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   }, [initialProducts]);
 
   // Extract unique brands and categories for filter
-  const uniqueBrands = ['All', ...Array.from(new Set(products.map(p => p.brand).filter(Boolean) as string[]))];
-  const uniqueCategories = ['All', ...Array.from(new Set(products.map(p => p.category).filter(Boolean) as string[]))];
+  const uniqueBrands = ['الكل', ...Array.from(new Set(products.map(p => p.brand).filter(Boolean) as string[]))];
+  const uniqueCategories = ['الكل', ...Array.from(new Set(products.map(p => p.category).filter(Boolean) as string[]))];
 
   const filteredAndSortedProducts = products
     .filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === 'All' || (product.category || 'Watches') === selectedCategory;
-      const matchesBrand = selectedBrand === 'All' || product.brand === selectedBrand;
+      const matchesCategory = selectedCategory === 'الكل' || (product.category || 'ساعات') === selectedCategory;
+      const matchesBrand = selectedBrand === 'الكل' || product.brand === selectedBrand;
       return matchesSearch && matchesCategory && matchesBrand;
     })
     .sort((a, b) => {
@@ -82,8 +82,8 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[#1a1a2e]">Shop Collection</h1>
-            <p className="text-gray-500 mt-2">{filteredAndSortedProducts.length} products</p>
+            <h1 className="text-3xl font-bold text-[#1a1a2e]">تشكيلة المتجر</h1>
+            <p className="text-gray-500 mt-2">{filteredAndSortedProducts.length} منتجات</p>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
@@ -107,7 +107,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
             <div className="relative">
               <input 
                 type="text" 
-                placeholder="Search watches..." 
+                placeholder="ابحث عن الساعات..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full sm:w-64 pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
@@ -123,7 +123,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
               className="py-2 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white text-[#1a1a2e] w-full sm:w-auto"
             >
               {uniqueBrands.map(b => (
-                <option key={b} value={b}>{b === 'All' ? 'All Brands' : b}</option>
+                <option key={b} value={b}>{b === 'الكل' ? 'جميع الماركات' : b}</option>
               ))}
             </select>
             
@@ -132,9 +132,9 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
               onChange={(e) => setSortBy(e.target.value)}
               className="py-2 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white text-[#1a1a2e] w-full sm:w-auto"
             >
-              <option value="newest">Newest</option>
-              <option value="price-low">Price: Low → High</option>
-              <option value="price-high">Price: High → Low</option>
+              <option value="newest">الأحدث</option>
+              <option value="price-low">السعر: من الأقل للأعلى</option>
+              <option value="price-high">السعر: من الأعلى للأقل</option>
             </select>
           </div>
         </div>
@@ -147,7 +147,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
           </div>
         ) : filteredAndSortedProducts.length === 0 ? (
           <div className="text-center py-20 text-gray-500">
-            <p className="text-xl">No watches found matching your search.</p>
+            <p className="text-xl">لم يتم العثور على ساعات تطابق بحثك.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -175,11 +175,11 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                         )}
                       </>
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">لا توجد صورة</div>
                     )}
                     {product.stockQuantity === 0 && (
                       <div className="absolute top-2 right-2 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded-md">
-                        OUT OF STOCK
+                        نفدت الكمية
                       </div>
                     )}
                     {(() => {
@@ -238,12 +238,12 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                           price: product.price,
                           image: product.images?.[0] || '',
                         });
-                        router.push('/checkout');
+                        setCheckoutModalOpen(true);
                       }}
                       disabled={product.stockQuantity === 0}
                       className="flex-1 sm:flex-none px-2 py-1.5 sm:px-3 sm:py-1.5 text-xs sm:text-sm rounded-xl font-bold text-white bg-[#1a1a2e] hover:bg-[#D4A853] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                     >
-                      Buy ⚡
+                      شراء ⚡
                     </button>
                   </div>
                 </div>

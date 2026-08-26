@@ -29,9 +29,10 @@ export function Navbar() {
     }
   }, [totalItems]);
 
+  const isHome = pathname === '/';
   const links = [
-    { name: 'Home', href: '/' },
-    { name: 'Shop', href: '/products' },
+    { name: isHome ? 'Home' : 'الرئيسية', href: '/' },
+    { name: isHome ? 'Shop' : 'تسوق', href: '/products' },
   ];
 
   return (

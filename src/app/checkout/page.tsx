@@ -29,10 +29,15 @@ export default function CheckoutPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const governorates = [
-    'Cairo', 'Giza', 'Alexandria', 'Qalyubia', 'Dakahlia', 'Sharqia', 
-    'Gharbia', 'Monufia', 'Beheira', 'Ismailia', 'Port Said', 'Suez', 
-    'Faiyum', 'Beni Suef', 'Minya', 'Asyut', 'Sohag', 'Qena', 'Luxor', 'Aswan',
-    'Red Sea', 'New Valley', 'Matrouh', 'North Sinai', 'South Sinai'
+    { id: 'Cairo', name: 'القاهرة' }, { id: 'Giza', name: 'الجيزة' }, { id: 'Alexandria', name: 'الإسكندرية' },
+    { id: 'Qalyubia', name: 'القليوبية' }, { id: 'Dakahlia', name: 'الدقهلية' }, { id: 'Sharqia', name: 'الشرقية' },
+    { id: 'Gharbia', name: 'الغربية' }, { id: 'Monufia', name: 'المنوفية' }, { id: 'Beheira', name: 'البحيرة' },
+    { id: 'Ismailia', name: 'الإسماعيلية' }, { id: 'Port Said', name: 'بورسعيد' }, { id: 'Suez', name: 'السويس' },
+    { id: 'Faiyum', name: 'الفيوم' }, { id: 'Beni Suef', name: 'بني سويف' }, { id: 'Minya', name: 'المنيا' },
+    { id: 'Asyut', name: 'أسيوط' }, { id: 'Sohag', name: 'سوهاج' }, { id: 'Qena', name: 'قنا' },
+    { id: 'Luxor', name: 'الأقصر' }, { id: 'Aswan', name: 'أسوان' }, { id: 'Red Sea', name: 'البحر الأحمر' },
+    { id: 'New Valley', name: 'الوادي الجديد' }, { id: 'Matrouh', name: 'مطروح' }, { id: 'North Sinai', name: 'شمال سيناء' },
+    { id: 'South Sinai', name: 'جنوب سيناء' }
   ];
 
   useEffect(() => {
@@ -150,13 +155,13 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-[#FAFAFA] py-12 px-4 sm:px-6 lg:px-8 font-cairo">
       <div className="max-w-7xl mx-auto">
         <Link href="/cart" className="inline-flex items-center text-gray-500 hover:text-[#D4A853] mb-8 transition-colors">
-          ← Back to Cart
+          ← العودة للسلة
         </Link>
         
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Checkout Form */}
           <div className="lg:w-3/5">
-            <h1 className="text-3xl font-bold text-[#1a1a2e] mb-8">Checkout</h1>
+            <h1 className="text-3xl font-bold text-[#1a1a2e] mb-8">إتمام الطلب</h1>
             
             <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-6">
               {globalError && (
@@ -166,11 +171,11 @@ export default function CheckoutPage() {
               )}
               
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-[#1a1a2e] border-b border-gray-100 pb-2">Contact Information</h2>
+                <h2 className="text-xl font-semibold text-[#1a1a2e] border-b border-gray-100 pb-2">بيانات الاتصال</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">الاسم بالكامل *</label>
                     <input
                       type="text"
                       id="fullName"
@@ -178,13 +183,13 @@ export default function CheckoutPage() {
                       value={formData.fullName}
                       onChange={handleInputChange}
                       className={`w-full bg-white border ${errors.fullName ? 'border-red-400 focus:ring-red-200' : 'border-gray-200 focus:border-[#D4A853] focus:ring-[#D4A853]/20'} rounded-xl px-4 py-3 focus:ring-1 outline-none transition-all`}
-                      placeholder="Ahmed Mohamed"
+                      placeholder="محمد أحمد"
                       required
                     />
                     {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
                   </div>
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف *</label>
                     <input
                       type="tel"
                       id="phone"
@@ -201,11 +206,11 @@ export default function CheckoutPage() {
               </div>
               
               <div className="space-y-4 pt-4">
-                <h2 className="text-xl font-semibold text-[#1a1a2e] border-b border-gray-100 pb-2">Shipping Address</h2>
+                <h2 className="text-xl font-semibold text-[#1a1a2e] border-b border-gray-100 pb-2">عنوان الشحن</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="governorate" className="block text-sm font-medium text-gray-700 mb-1">Governorate *</label>
+                    <label htmlFor="governorate" className="block text-sm font-medium text-gray-700 mb-1">المحافظة *</label>
                     <select
                       id="governorate"
                       name="governorate"
@@ -215,12 +220,12 @@ export default function CheckoutPage() {
                       required
                     >
                       {governorates.map(gov => (
-                        <option key={gov} value={gov}>{gov}</option>
+                        <option key={gov.id} value={gov.id}>{gov.name}</option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City / Area *</label>
+                    <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">المدينة / المنطقة *</label>
                     <input
                       type="text"
                       id="city"
@@ -228,7 +233,7 @@ export default function CheckoutPage() {
                       value={formData.city}
                       onChange={handleInputChange}
                       className={`w-full bg-white border ${errors.city ? 'border-red-400 focus:ring-red-200' : 'border-gray-200 focus:border-[#D4A853] focus:ring-[#D4A853]/20'} rounded-xl px-4 py-3 focus:ring-1 outline-none transition-all`}
-                      placeholder="Nasr City"
+                      placeholder="مدينة نصر"
                       required
                     />
                     {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
@@ -236,7 +241,7 @@ export default function CheckoutPage() {
                 </div>
                 
                 <div>
-                  <label htmlFor="detailedAddress" className="block text-sm font-medium text-gray-700 mb-1">Detailed Address *</label>
+                  <label htmlFor="detailedAddress" className="block text-sm font-medium text-gray-700 mb-1">العنوان بالتفصيل *</label>
                   <textarea
                     id="detailedAddress"
                     name="detailedAddress"
@@ -244,14 +249,14 @@ export default function CheckoutPage() {
                     onChange={handleInputChange}
                     rows={3}
                     className={`w-full bg-white border ${errors.detailedAddress ? 'border-red-400 focus:ring-red-200' : 'border-gray-200 focus:border-[#D4A853] focus:ring-[#D4A853]/20'} rounded-xl px-4 py-3 focus:ring-1 outline-none transition-all resize-none`}
-                    placeholder="Street name, Building number, Apartment number..."
+                    placeholder="اسم الشارع، رقم العمارة، رقم الشقة..."
                     required
                   ></textarea>
                   {errors.detailedAddress && <p className="text-red-500 text-xs mt-1">{errors.detailedAddress}</p>}
                 </div>
                 
                 <div>
-                  <label htmlFor="orderNotes" className="block text-sm font-medium text-gray-700 mb-1">Order Notes (Optional)</label>
+                  <label htmlFor="orderNotes" className="block text-sm font-medium text-gray-700 mb-1">ملاحظات الطلب (اختياري)</label>
                   <textarea
                     id="orderNotes"
                     name="orderNotes"
@@ -259,18 +264,18 @@ export default function CheckoutPage() {
                     onChange={handleInputChange}
                     rows={2}
                     className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:border-[#D4A853] focus:ring-1 focus:ring-[#D4A853]/20 outline-none transition-all resize-none"
-                    placeholder="Any special requests or delivery instructions..."
+                    placeholder="أي طلبات خاصة أو تعليمات للتوصيل..."
                   ></textarea>
                 </div>
               </div>
               
               <div className="space-y-4 pt-4">
-                <h2 className="text-xl font-semibold text-[#1a1a2e] border-b border-gray-100 pb-2">Payment Method</h2>
+                <h2 className="text-xl font-semibold text-[#1a1a2e] border-b border-gray-100 pb-2">طريقة الدفع</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[
-                    { id: 'Cash on Delivery', label: 'Cash on Delivery', icon: '💵' },
-                    { id: 'Vodafone Cash', label: 'Vodafone Cash', icon: '📱' },
-                    { id: 'InstaPay', label: 'InstaPay', icon: '🏦' }
+                    { id: 'Cash on Delivery', label: 'الدفع عند الاستلام', icon: '💵' },
+                    { id: 'Vodafone Cash', label: 'فودافون كاش', icon: '📱' },
+                    { id: 'InstaPay', label: 'إنستاباي', icon: '🏦' }
                   ].map((method) => (
                     <label 
                       key={method.id} 
@@ -297,11 +302,11 @@ export default function CheckoutPage() {
                 </div>
                 {formData.paymentMethod !== 'Cash on Delivery' ? (
                   <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl text-sm text-blue-800">
-                    You have selected <strong>{formData.paymentMethod}</strong>. Our team will contact you on WhatsApp to provide payment details after you place the order.
+                    لقد اخترت <strong>{formData.paymentMethod === 'Vodafone Cash' ? 'فودافون كاش' : 'إنستاباي'}</strong>. سيتواصل فريقنا معك على الواتساب لتزويدك بتفاصيل الدفع بعد تأكيد الطلب.
                   </div>
                 ) : (
                   <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl text-sm text-gray-700">
-                    Pay securely in cash when your order is delivered to your doorstep.
+                    ادفع بأمان نقداً عند استلام طلبك.
                   </div>
                 )}
               </div>
@@ -313,18 +318,18 @@ export default function CheckoutPage() {
                   className="btn-gold w-full py-4 rounded-xl flex items-center justify-center gap-2 font-semibold text-lg hover:shadow-lg transition-all disabled:opacity-70"
                 >
                   {loading ? (
-                    <><span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Processing...</>
+                    <><span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> جاري التنفيذ...</>
                   ) : (
-                    'Confirm Order'
+                    'تأكيد الطلب'
                   )}
                 </button>
                 <div className="mt-4 p-4 bg-green-50 rounded-xl border border-green-100 flex items-start gap-3 text-sm text-green-800">
                   <span className="text-xl">💬</span>
-                  <p className="font-medium mt-0.5">You'll get a WhatsApp confirmation right after you order.</p>
+                  <p className="font-medium mt-0.5">ستصلك رسالة تأكيد على الواتساب فور إتمام الطلب.</p>
                 </div>
                 <div className="flex items-center justify-center gap-2 mt-4 text-sm text-gray-500">
                   <span className="text-green-600">🔒</span>
-                  <span>Secure checkout. Pay safely.</span>
+                  <span>دفع وتسوق آمن 100%</span>
                 </div>
               </div>
             </form>
@@ -333,7 +338,7 @@ export default function CheckoutPage() {
           {/* Order Summary Sidebar */}
           <div className="lg:w-2/5">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 lg:sticky lg:top-24">
-              <h2 className="text-xl font-bold text-[#1a1a2e] mb-6">Order Summary</h2>
+              <h2 className="text-xl font-bold text-[#1a1a2e] mb-6">ملخص الطلب</h2>
               
               <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
                 {items.map((item) => (
@@ -361,10 +366,10 @@ export default function CheckoutPage() {
                         return (
                           <div className="flex flex-col">
                             {p.hasDiscount && (
-                              <span className="text-gray-400 line-through text-xs">{(p.originalPrice * item.quantity).toLocaleString()} EGP</span>
+                              <span className="text-gray-400 line-through text-xs">{(p.originalPrice * item.quantity).toLocaleString()} جنيه</span>
                             )}
                             <p className="text-sm font-medium text-[#D4A853]">
-                              {(p.finalPrice * item.quantity).toLocaleString()} EGP
+                              {(p.finalPrice * item.quantity).toLocaleString()} جنيه
                             </p>
                           </div>
                         );
@@ -376,42 +381,42 @@ export default function CheckoutPage() {
               
               <div className="border-t border-gray-100 pt-4 space-y-3">
                 <div className="flex justify-between text-sm text-gray-600">
-                  <span>Subtotal</span>
-                  <span>{originalTotalPrice.toLocaleString()} EGP</span>
+                  <span>المجموع الفرعي</span>
+                  <span>{originalTotalPrice.toLocaleString()} جنيه</span>
                 </div>
                 {originalTotalPrice > totalPrice && (
                   <div className="flex justify-between text-sm text-red-600 font-bold bg-red-50 p-2 rounded-lg border border-red-100 my-1">
-                    <span>Discount Saved</span>
-                    <span>-{(originalTotalPrice - totalPrice).toLocaleString()} EGP</span>
+                    <span>قيمة الخصم</span>
+                    <span>-{(originalTotalPrice - totalPrice).toLocaleString()} جنيه</span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm text-gray-600">
-                  <span>Shipping</span>
-                  <span className="text-green-600 font-medium">Free</span>
+                  <span>الشحن</span>
+                  <span className="text-green-600 font-medium">مجاني</span>
                 </div>
                 <div className="border-t border-gray-100 pt-3 mt-1 flex justify-between items-center">
-                  <span className="text-base font-bold text-[#1a1a2e]">Total</span>
+                  <span className="text-base font-bold text-[#1a1a2e]">الإجمالي</span>
                   <span className="text-xl font-bold text-[#D4A853]">
-                    {totalPrice.toLocaleString()} EGP
+                    {totalPrice.toLocaleString()} جنيه
                   </span>
                 </div>
               </div>
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-6">
-              <h3 className="text-lg font-semibold text-[#1a1a2e] mb-4">Secure Shopping</h3>
+              <h3 className="text-lg font-semibold text-[#1a1a2e] mb-4">تسوق بأمان</h3>
               <ul className="space-y-3 text-sm text-gray-600">
                 <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> 100% Authentic Products
+                  <span className="text-green-500">✓</span> منتجات أصلية 100%
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Secure Checkout
+                  <span className="text-green-500">✓</span> دفع وتسوق آمن
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Pay safely via InstaPay or Vodafone Cash
+                  <span className="text-green-500">✓</span> متوفر الدفع عبر إنستاباي أو فودافون كاش
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Cash on Delivery available
+                  <span className="text-green-500">✓</span> متوفر الدفع عند الاستلام
                 </li>
               </ul>
             </div>

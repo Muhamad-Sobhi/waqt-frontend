@@ -31,7 +31,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [selectedImage, setSelectedImage] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: '50%', y: '50%' });
   const [isHovering, setIsHovering] = useState(false);
-  const { addItem } = useCart();
+  const { addItem, setCheckoutModalOpen } = useCart();
   const { offer } = useActiveOffer();
   const router = useRouter();
 
@@ -143,10 +143,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     return (
       <div className="min-h-screen bg-[#FAFAFA] py-24 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#1a1a2e] mb-4">Product Not Found</h2>
-          <p className="text-gray-500 mb-8">The watch you're looking for doesn't exist or is currently unavailable.</p>
+          <h2 className="text-2xl font-bold text-[#1a1a2e] mb-4">المنتج غير موجود</h2>
+          <p className="text-gray-500 mb-8">الساعة التي تبحث عنها غير موجودة أو غير متاحة حالياً.</p>
           <Link href="/products" className="btn-primary px-6 py-3 rounded-xl inline-block">
-            Back to Shop
+            العودة للمتجر
           </Link>
         </div>
       </div>
@@ -246,7 +246,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   }}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">No Image Available</div>
+                <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">لا توجد صورة متاحة</div>
               )}
               {(() => {
                 const p = calculateDiscountedPrice(product.price, product.id, offer);
@@ -284,9 +284,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           {/* Right Column - Details */}
           <div className="w-full lg:w-1/2 flex flex-col">
             <nav className="text-sm text-gray-500 mb-6">
-              <Link href="/" className="hover:text-[#D4A853]">Home</Link>
+              <Link href="/" className="hover:text-[#D4A853]">الرئيسية</Link>
               <span className="mx-2">&gt;</span>
-              <Link href="/products" className="hover:text-[#D4A853]">Shop</Link>
+              <Link href="/products" className="hover:text-[#D4A853]">المتجر</Link>
               <span className="mx-2">&gt;</span>
               <span className="text-gray-900">{product.name}</span>
             </nav>
@@ -311,13 +311,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 {reviews.length > 0 
                   ? `${(reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)} `
                   : '0.0 '}
-                <span className="text-gray-400 font-normal ml-1">({reviews.length} reviews)</span>
+                <span className="text-gray-400 font-normal ml-1">({reviews.length} تقييمات)</span>
               </span>
               <button onClick={() => {
                 const el = document.getElementById('reviews');
                 if(el) el.scrollIntoView({ behavior: 'smooth' });
-              }} className="text-[#D4A853] text-sm font-medium hover:underline ml-2">
-                Read Reviews
+              }} className="text-[#D4A853] text-sm font-medium hover:underline mx-2">
+                قراءة التقييمات
               </button>
             </div>
 
@@ -327,13 +327,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <div className="mb-6 flex flex-col items-start">
                   {p.hasDiscount && (
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-gray-400 line-through text-lg">{p.originalPrice.toLocaleString('en-US')} EGP</span>
+                      <span className="text-gray-400 line-through text-lg">{p.originalPrice.toLocaleString('en-US')} جنيه</span>
                       <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded border border-red-200">
-                        SAVE {p.originalPrice - p.finalPrice} EGP
+                        وفر {p.originalPrice - p.finalPrice} جنيه
                       </span>
                     </div>
                   )}
-                  <p className="text-4xl font-black text-[#D4A853]">{p.finalPrice.toLocaleString('en-US')} EGP</p>
+                  <p className="text-4xl font-black text-[#D4A853]">{p.finalPrice.toLocaleString('en-US')} جنيه</p>
                 </div>
               );
             })()}
@@ -345,7 +345,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             {/* Specifications */}
             {product.specifications && Object.values(product.specifications).some(val => val && String(val).trim() !== '') && (
               <div className="mb-8">
-                <h3 className="font-semibold text-lg text-[#1a1a2e] mb-4">Specifications</h3>
+                <h3 className="font-semibold text-lg text-[#1a1a2e] mb-4">المواصفات</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 text-sm">
                   {Object.entries(product.specifications)
                     .filter(([_, value]) => value && String(value).trim() !== '')
@@ -364,9 +364,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
             <div className="mb-6">
               {product.stockQuantity > 0 ? (
-                <span className="text-green-600 font-medium">In Stock</span>
+                <span className="text-green-600 font-medium">متوفر بالمخزون</span>
               ) : (
-                <span className="text-red-500 font-medium">Out of Stock</span>
+                <span className="text-red-500 font-medium">نفدت الكمية</span>
               )}
             </div>
 
@@ -396,18 +396,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 disabled={product.stockQuantity === 0}
                 className="bg-[#1a1a2e] text-white flex-1 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold shadow-md transition-all hover:bg-[#D4A853] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {product.stockQuantity > 0 ? 'Add to Cart 🛒' : 'Out of Stock'}
+                {product.stockQuantity > 0 ? 'أضف للسلة 🛒' : 'نفدت الكمية'}
               </button>
 
               <button 
                 onClick={() => {
                   handleAddToCart();
-                  router.push('/checkout');
+                  setCheckoutModalOpen(true);
                 }}
                 disabled={product.stockQuantity === 0}
                 className="btn-gold flex-1 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold shadow-md transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {product.stockQuantity > 0 ? 'Buy Now ⚡' : 'Out of Stock'}
+                {product.stockQuantity > 0 ? 'اشتري الآن ⚡' : 'نفدت الكمية'}
               </button>
             </div>
 
@@ -416,19 +416,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-50 flex items-center justify-center mb-2">
                   <span className="text-blue-600 text-base sm:text-lg">✓</span>
                 </div>
-                <span className="text-[10px] sm:text-xs font-medium text-gray-600">100% Authentic</span>
+                <span className="text-[10px] sm:text-xs font-medium text-gray-600">أصلية 100%</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-50 flex items-center justify-center mb-2">
                   <span className="text-green-600 text-base sm:text-lg">✓</span>
                 </div>
-                <span className="text-[10px] sm:text-xs font-medium text-gray-600">Free Shipping</span>
+                <span className="text-[10px] sm:text-xs font-medium text-gray-600">شحن سريع</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-purple-50 flex items-center justify-center mb-2">
                   <span className="text-purple-600 text-base sm:text-lg">✓</span>
                 </div>
-                <span className="text-[10px] sm:text-xs font-medium text-gray-600">Cash on Delivery</span>
+                <span className="text-[10px] sm:text-xs font-medium text-gray-600">الدفع عند الاستلام</span>
               </div>
             </div>
           </div>
@@ -437,17 +437,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         {/* Reviews Section */}
         <div id="reviews" className="mt-20 border-t border-gray-200 pt-16 scroll-mt-24">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-[#1a1a2e] mb-10 text-center">Customer Reviews</h2>
+            <h2 className="text-3xl font-bold text-[#1a1a2e] mb-10 text-center">تقييمات العملاء</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {/* Write a review form */}
               <div className="md:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
-                <h3 className="text-xl font-semibold mb-6">Write a Review</h3>
+                <h3 className="text-xl font-semibold mb-6">اكتب تقييماً</h3>
                 {hasReviewed ? (
                   <div className="text-center py-8 bg-green-50 rounded-xl border border-green-100">
                     <span className="text-3xl mb-2 block">🎉</span>
-                    <p className="text-green-800 font-medium">Thank you for your review!</p>
-                    <p className="text-sm text-green-600 mt-1">Your review has been submitted and is pending approval.</p>
+                    <p className="text-green-800 font-medium">شكراً لتقييمك!</p>
+                    <p className="text-sm text-green-600 mt-1">تم إرسال تقييمك وهو قيد المراجعة.</p>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmitReview} className="space-y-4">
@@ -457,18 +457,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                       </div>
                     )}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">الاسم</label>
                       <input 
                         type="text" 
                         required
                         value={reviewForm.name}
                         onChange={e => setReviewForm({...reviewForm, name: e.target.value})}
                         className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#D4A853] focus:border-transparent outline-none transition-all"
-                        placeholder="John Doe"
+                        placeholder="محمد أحمد"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">التقييم</label>
                       <div className="flex gap-2">
                         {[1, 2, 3, 4, 5].map(star => (
                           <button
@@ -483,14 +483,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Comment</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">التعليق</label>
                       <textarea 
                         required
                         rows={4}
                         value={reviewForm.comment}
                         onChange={e => setReviewForm({...reviewForm, comment: e.target.value})}
                         className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#D4A853] focus:border-transparent outline-none transition-all resize-none"
-                        placeholder="What do you think about this product?"
+                        placeholder="ما رأيك في هذا المنتج؟"
                       ></textarea>
                     </div>
                     <button 
@@ -498,7 +498,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                       disabled={submittingReview}
                       className="w-full bg-[#1a1a2e] text-white py-3 rounded-lg font-medium hover:bg-[#D4A853] transition-colors disabled:opacity-50"
                     >
-                      {submittingReview ? 'Submitting...' : 'Submit Review'}
+                      {submittingReview ? 'جاري الإرسال...' : 'إرسال التقييم'}
                     </button>
                   </form>
                 )}
@@ -512,7 +512,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="font-semibold text-lg text-[#1a1a2e]">{review.authorName}</h4>
                         <span className="text-sm text-gray-400">
-                          {review.createdAt?.seconds ? new Date(review.createdAt.seconds * 1000).toLocaleDateString() : 'Just now'}
+                          {review.createdAt?.seconds ? new Date(review.createdAt.seconds * 1000).toLocaleDateString() : 'الآن'}
                         </span>
                       </div>
                       <div className="flex text-amber-500 mb-3 text-sm">
@@ -525,17 +525,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   ))
                 ) : (
                   <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-100 border-dashed">
-                    <p className="text-gray-500">No reviews yet. Be the first to review this product!</p>
+                    <p className="text-gray-500">لا توجد تقييمات بعد. كن أول من يقيّم هذا المنتج!</p>
                   </div>
                 )}
               </div>
             </div>
           </div>
         </div>
-        {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="mt-20 border-t border-gray-200 pt-16">
-            <h2 className="text-2xl font-bold text-[#1a1a2e] mb-8 text-center">You May Also Like</h2>
+            <h2 className="text-2xl font-bold text-[#1a1a2e] mb-8 text-center">قد يعجبك أيضاً</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {relatedProducts.map(rel => (
                 <Link key={rel.id} href={`/products/${rel.id}`} className="group bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
@@ -543,7 +542,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     {rel.images?.[0] ? (
                       <img src={rel.images[0]} alt={rel.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">لا توجد صورة</div>
                     )}
                     {(() => {
                       const p = calculateDiscountedPrice(rel.price, rel.id, offer);
@@ -564,9 +563,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     return (
                       <div className="flex flex-col">
                         {p.hasDiscount && (
-                          <span className="text-gray-400 line-through text-xs">{p.originalPrice.toLocaleString()} EGP</span>
+                          <span className="text-gray-400 line-through text-xs">{p.originalPrice.toLocaleString()} جنيه</span>
                         )}
-                        <p className="text-[#D4A853] font-bold">{p.finalPrice.toLocaleString()} EGP</p>
+                        <p className="text-[#D4A853] font-bold">{p.finalPrice.toLocaleString()} جنيه</p>
                       </div>
                     );
                   })()}

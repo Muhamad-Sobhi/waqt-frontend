@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react';
 import { collection, query, where, getDocs, limit, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { usePathname } from 'next/navigation';
 
 export default function OfferBanner() {
   const [offer, setOffer] = useState<any>(null);
   const [timeLeft, setTimeLeft] = useState<{ d: number; h: number; m: number; s: number } | null>(null);
+  const pathname = usePathname();
+  const isHome = pathname === '/';
 
   useEffect(() => {
     const fetchOffer = async () => {
@@ -70,11 +73,11 @@ export default function OfferBanner() {
 
   let discountText = '';
   if (offer.type === 'percentage') {
-    discountText = `${offer.value}% OFF`;
+    discountText = isHome ? `${offer.value}% OFF` : `خصم ${offer.value}%`;
   } else if (offer.type === 'fixed') {
-    discountText = `${offer.value} EGP OFF`;
+    discountText = isHome ? `${offer.value} EGP OFF` : `خصم ${offer.value} جنيه`;
   } else if (offer.type === 'free_shipping') {
-    discountText = `FREE SHIPPING`;
+    discountText = isHome ? `SPECIAL OFFER` : `عروض حصرية`;
   }
 
   return (
@@ -91,8 +94,8 @@ export default function OfferBanner() {
           {discountText}
         </div>
         
-        <div className="flex items-center gap-1.5 font-mono bg-black/20 px-3 py-1 rounded-lg shadow-inner">
-          <span className="text-white/80 text-xs mr-1 font-sans uppercase">Ends In:</span>
+        <div className="flex items-center gap-1.5 font-mono bg-black/20 px-3 py-1 rounded-lg shadow-inner" dir="ltr">
+          <span className="text-white/80 text-xs mr-1 font-sans uppercase">{isHome ? 'Ends In:' : 'ينتهي في:'}</span>
           {timeLeft.d > 0 && <span className="text-white font-bold">{timeLeft.d}d</span>}
           <span className="text-white font-bold">{timeLeft.h.toString().padStart(2, '0')}h</span>
           <span className="text-white font-bold">:</span>
